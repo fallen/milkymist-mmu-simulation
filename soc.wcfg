@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="./isim.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="soc" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="106" />
+   <wvobject fp_name="/soc/memadr" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">memadr[12:0]</obj_property>
+      <obj_property name="ObjectShortName">memadr[12:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/I_DAT_I" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">I_DAT_I[31:0]</obj_property>
+      <obj_property name="ObjectShortName">I_DAT_I[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/D_DAT_I" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">D_DAT_I[31:0]</obj_property>
+      <obj_property name="ObjectShortName">D_DAT_I[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/D_DAT_O" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">D_DAT_O[31:0]</obj_property>
+      <obj_property name="ObjectShortName">D_DAT_O[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/D_ADR_O" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">D_ADR_O[31:0]</obj_property>
+      <obj_property name="ObjectShortName">D_ADR_O[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/clk_i" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">clk_i</obj_property>
+      <obj_property name="ObjectShortName">clk_i</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/rst_i" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">rst_i</obj_property>
+      <obj_property name="ObjectShortName">rst_i</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/stall_a" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">stall_a</obj_property>
+      <obj_property name="ObjectShortName">stall_a</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/stall_x" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">stall_x</obj_property>
+      <obj_property name="ObjectShortName">stall_x</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/stall_m" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">stall_m</obj_property>
+      <obj_property name="ObjectShortName">stall_m</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/address_x" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">address_x[31:0]</obj_property>
+      <obj_property name="ObjectShortName">address_x[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/address_m" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">address_m[31:0]</obj_property>
+      <obj_property name="ObjectShortName">address_m[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/load_q_m" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">load_q_m</obj_property>
+      <obj_property name="ObjectShortName">load_q_m</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/store_q_m" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">store_q_m</obj_property>
+      <obj_property name="ObjectShortName">store_q_m</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/store_data" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">store_data[31:0]</obj_property>
+      <obj_property name="ObjectShortName">store_data[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/store_byte_select" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">store_byte_select[3:0]</obj_property>
+      <obj_property name="ObjectShortName">store_byte_select[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/refill_ready" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">refill_ready</obj_property>
+      <obj_property name="ObjectShortName">refill_ready</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/refill_data" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">refill_data[31:0]</obj_property>
+      <obj_property name="ObjectShortName">refill_data[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dflush" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">dflush</obj_property>
+      <obj_property name="ObjectShortName">dflush</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/stall_request" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">stall_request</obj_property>
+      <obj_property name="ObjectShortName">stall_request</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/load_data" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">load_data[31:0]</obj_property>
+      <obj_property name="ObjectShortName">load_data[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/read_port_enable" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">read_port_enable</obj_property>
+      <obj_property name="ObjectShortName">read_port_enable</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/write_port_enable" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">write_port_enable</obj_property>
+      <obj_property name="ObjectShortName">write_port_enable</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/way_tmem_we" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">way_tmem_we[0:0]</obj_property>
+      <obj_property name="ObjectShortName">way_tmem_we[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/way_dmem_we" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">way_dmem_we[0:0]</obj_property>
+      <obj_property name="ObjectShortName">way_dmem_we[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/way_data" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">way_data[0:0,31:0]</obj_property>
+      <obj_property name="ObjectShortName">way_data[0:0,31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/way_tag" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">way_tag[0:0,19:1]</obj_property>
+      <obj_property name="ObjectShortName">way_tag[0:0,19:1]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/way_valid" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">way_valid[0:0]</obj_property>
+      <obj_property name="ObjectShortName">way_valid[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/way_match" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">way_match[0:0]</obj_property>
+      <obj_property name="ObjectShortName">way_match[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/miss" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">miss</obj_property>
+      <obj_property name="ObjectShortName">miss</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/tmem_read_address" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">tmem_read_address[7:0]</obj_property>
+      <obj_property name="ObjectShortName">tmem_read_address[7:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/tmem_write_address" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">tmem_write_address[7:0]</obj_property>
+      <obj_property name="ObjectShortName">tmem_write_address[7:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dmem_read_address" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dmem_read_address[9:0]</obj_property>
+      <obj_property name="ObjectShortName">dmem_read_address[9:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dmem_write_address" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dmem_write_address[9:0]</obj_property>
+      <obj_property name="ObjectShortName">dmem_write_address[9:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/tmem_write_data" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">tmem_write_data[19:0]</obj_property>
+      <obj_property name="ObjectShortName">tmem_write_data[19:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/flushing" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">flushing</obj_property>
+      <obj_property name="ObjectShortName">flushing</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/check" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">check</obj_property>
+      <obj_property name="ObjectShortName">check</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/refill" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">refill</obj_property>
+      <obj_property name="ObjectShortName">refill</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/valid_store" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">valid_store</obj_property>
+      <obj_property name="ObjectShortName">valid_store</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/last_refill" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">last_refill</obj_property>
+      <obj_property name="ObjectShortName">last_refill</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/restart_request" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">restart_request</obj_property>
+      <obj_property name="ObjectShortName">restart_request</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/refill_request" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">refill_request</obj_property>
+      <obj_property name="ObjectShortName">refill_request</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/refill_address" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">refill_address[31:0]</obj_property>
+      <obj_property name="ObjectShortName">refill_address[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/refilling" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">refilling</obj_property>
+      <obj_property name="ObjectShortName">refilling</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dmem_write_data" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dmem_write_data[31:0]</obj_property>
+      <obj_property name="ObjectShortName">dmem_write_data[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/state" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">state[2:0]</obj_property>
+      <obj_property name="ObjectShortName">state[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/refill_way_select" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">refill_way_select[0:0]</obj_property>
+      <obj_property name="ObjectShortName">refill_way_select[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/refill_offset" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">refill_offset[3:2]</obj_property>
+      <obj_property name="ObjectShortName">refill_offset[3:2]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/flush_set" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">flush_set[7:0]</obj_property>
+      <obj_property name="ObjectShortName">flush_set[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/load_q_m" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">load_q_m</obj_property>
+      <obj_property name="ObjectShortName">load_q_m</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/store_q_m" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">store_q_m</obj_property>
+      <obj_property name="ObjectShortName">store_q_m</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache_select_m" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">dcache_select_m</obj_property>
+      <obj_property name="ObjectShortName">dcache_select_m</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache_select_x" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">dcache_select_x</obj_property>
+      <obj_property name="ObjectShortName">dcache_select_x</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/load_store_address_x" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">load_store_address_x[31:0]</obj_property>
+      <obj_property name="ObjectShortName">load_store_address_x[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/interrupt" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">interrupt[31:0]</obj_property>
+      <obj_property name="ObjectShortName">interrupt[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/D_ACK_I" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">D_ACK_I</obj_property>
+      <obj_property name="ObjectShortName">D_ACK_I</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/D_ADR_O" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">D_ADR_O[31:0]</obj_property>
+      <obj_property name="ObjectShortName">D_ADR_O[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/D_BTE_O" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">D_BTE_O[1:0]</obj_property>
+      <obj_property name="ObjectShortName">D_BTE_O[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/D_CTI_O" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">D_CTI_O[2:0]</obj_property>
+      <obj_property name="ObjectShortName">D_CTI_O[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/D_CYC_O" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">D_CYC_O</obj_property>
+      <obj_property name="ObjectShortName">D_CYC_O</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/D_DAT_I" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">D_DAT_I[31:0]</obj_property>
+      <obj_property name="ObjectShortName">D_DAT_I[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/D_DAT_O" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">D_DAT_O[31:0]</obj_property>
+      <obj_property name="ObjectShortName">D_DAT_O[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/D_ERR_I" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">D_ERR_I</obj_property>
+      <obj_property name="ObjectShortName">D_ERR_I</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/D_LOCK_O" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">D_LOCK_O</obj_property>
+      <obj_property name="ObjectShortName">D_LOCK_O</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/D_RTY_I" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">D_RTY_I</obj_property>
+      <obj_property name="ObjectShortName">D_RTY_I</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/D_SEL_O" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">D_SEL_O[3:0]</obj_property>
+      <obj_property name="ObjectShortName">D_SEL_O[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/D_STB_O" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">D_STB_O</obj_property>
+      <obj_property name="ObjectShortName">D_STB_O</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/D_WE_O" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">D_WE_O</obj_property>
+      <obj_property name="ObjectShortName">D_WE_O</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/I_ADR_O" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">I_ADR_O[31:0]</obj_property>
+      <obj_property name="ObjectShortName">I_ADR_O[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/exception_q_w" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">exception_q_w</obj_property>
+      <obj_property name="ObjectShortName">exception_q_w</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/exception_w" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">exception_w</obj_property>
+      <obj_property name="ObjectShortName">exception_w</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/exception_x" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">exception_x</obj_property>
+      <obj_property name="ObjectShortName">exception_x</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/pc_d" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">pc_d[31:2]</obj_property>
+      <obj_property name="ObjectShortName">pc_d[31:2]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/pc_f" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">pc_f[31:2]</obj_property>
+      <obj_property name="ObjectShortName">pc_f[31:2]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/pc_m" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">pc_m[31:2]</obj_property>
+      <obj_property name="ObjectShortName">pc_m[31:2]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/pc_w" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">pc_w[31:2]</obj_property>
+      <obj_property name="ObjectShortName">pc_w[31:2]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/pc_x" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">pc_x[31:2]</obj_property>
+      <obj_property name="ObjectShortName">pc_x[31:2]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dmem_read_address" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dmem_read_address[9:0]</obj_property>
+      <obj_property name="ObjectShortName">dmem_read_address[9:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dmem_write_address" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dmem_write_address[9:0]</obj_property>
+      <obj_property name="ObjectShortName">dmem_write_address[9:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dmem_write_data" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dmem_write_data[31:0]</obj_property>
+      <obj_property name="ObjectShortName">dmem_write_data[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_ctrl_csr_reg" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dtlb_ctrl_csr_reg[31:0]</obj_property>
+      <obj_property name="ObjectShortName">dtlb_ctrl_csr_reg[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_data_read_address" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dtlb_data_read_address[9:0]</obj_property>
+      <obj_property name="ObjectShortName">dtlb_data_read_address[9:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_data_read_port_enable" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">dtlb_data_read_port_enable</obj_property>
+      <obj_property name="ObjectShortName">dtlb_data_read_port_enable</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_data_write_address" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dtlb_data_write_address[9:0]</obj_property>
+      <obj_property name="ObjectShortName">dtlb_data_write_address[9:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_flush_set" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dtlb_flush_set[9:0]</obj_property>
+      <obj_property name="ObjectShortName">dtlb_flush_set[9:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_flushing" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">dtlb_flushing</obj_property>
+      <obj_property name="ObjectShortName">dtlb_flushing</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_miss" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">dtlb_miss</obj_property>
+      <obj_property name="ObjectShortName">dtlb_miss</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_miss_addr" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">dtlb_miss_addr</obj_property>
+      <obj_property name="ObjectShortName">dtlb_miss_addr</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_read_data" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dtlb_read_data[19:0]</obj_property>
+      <obj_property name="ObjectShortName">dtlb_read_data[19:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_read_tag" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dtlb_read_tag[9:0]</obj_property>
+      <obj_property name="ObjectShortName">dtlb_read_tag[9:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_sets" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dtlb_sets[31:0]</obj_property>
+      <obj_property name="ObjectShortName">dtlb_sets[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_state" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dtlb_state[1:0]</obj_property>
+      <obj_property name="ObjectShortName">dtlb_state[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_tag_read_address" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dtlb_tag_read_address[9:0]</obj_property>
+      <obj_property name="ObjectShortName">dtlb_tag_read_address[9:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_tag_read_port_enable" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">dtlb_tag_read_port_enable</obj_property>
+      <obj_property name="ObjectShortName">dtlb_tag_read_port_enable</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_tag_write_address" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dtlb_tag_write_address[9:0]</obj_property>
+      <obj_property name="ObjectShortName">dtlb_tag_write_address[9:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_updating" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">dtlb_updating</obj_property>
+      <obj_property name="ObjectShortName">dtlb_updating</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_write_data" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dtlb_write_data[19:0]</obj_property>
+      <obj_property name="ObjectShortName">dtlb_write_data[19:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_write_port_enable" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">dtlb_write_port_enable</obj_property>
+      <obj_property name="ObjectShortName">dtlb_write_port_enable</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_write_tag" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dtlb_write_tag[9:0]</obj_property>
+      <obj_property name="ObjectShortName">dtlb_write_tag[9:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/flush_set" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">flush_set[7:0]</obj_property>
+      <obj_property name="ObjectShortName">flush_set[7:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_update_vaddr_csr_reg" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dtlb_update_vaddr_csr_reg[31:0]</obj_property>
+      <obj_property name="ObjectShortName">dtlb_update_vaddr_csr_reg[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_update_paddr_csr_reg" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dtlb_update_paddr_csr_reg[31:0]</obj_property>
+      <obj_property name="ObjectShortName">dtlb_update_paddr_csr_reg[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/kernel_mode_reg" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">kernel_mode_reg</obj_property>
+      <obj_property name="ObjectShortName">kernel_mode_reg</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/csr" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">csr[4:0]</obj_property>
+      <obj_property name="ObjectShortName">csr[4:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/csr_write_data" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">csr_write_data[31:0]</obj_property>
+      <obj_property name="ObjectShortName">csr_write_data[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/csr_write_enable" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">csr_write_enable</obj_property>
+      <obj_property name="ObjectShortName">csr_write_enable</obj_property>
+   </wvobject>
+</wave_config>
