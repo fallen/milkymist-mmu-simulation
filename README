@@ -1,0 +1,22 @@
+Steps to follow to run a simulation of Milkymist MMU project : 
+
+1°) You need to have installed ISE WebPack or at least have a fuse/isim (distributed with ISE WebPack)
+
+In the next lines I will take for granted that you installed Xilinx ISE under /opt/Xilinx/ and that you have ISE 13.4
+
+1°) Clone this repository
+
+	git clone git://github.com/fallen/milkymist-mmu-simulation.git
+
+2°) Source Xilinx settings
+
+	source /opt/Xilinx/13.4/ISE_DS/settings32.sh
+
+3°) Copy ram.data file into working directory
+
+	cp software/ram.data .
+
+4°) Run make
+
+	make
+
