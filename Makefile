@@ -34,3 +34,8 @@ simulation: soc
 
 soc: $(SOURCE) $(PROJECT)
 	fuse -intstyle ise -o soc -prj soc.prj --timescale 1ns/1ns soc
+
+clean:
+	rm -rf soc isim isim.* fuse.* fuseRelaunch.cmd
+
+.PHONY: clean simulation all
