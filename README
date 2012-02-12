@@ -20,3 +20,6 @@ In the next lines I will take for granted that you installed Xilinx ISE under /o
 
 	make
 
+For more advanced things like the following, please refer to README.advanced file : 
+
+- generating your own bios.bin and ram.data

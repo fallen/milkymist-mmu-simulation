@@ -1,0 +1,41 @@
+I - Generating your own bios.bin and ram.data
+
+1°) Follow README from the bottom of this page to install lm32-binutils-mmu
+
+	https://github.com/fallen/lm32-binutils-mmu
+
+1°) Clone milkymist-mmu repository
+
+	git clone git://github.com/fallen/milkymist-mmu.git
+
+2°) Checkout "mmu-bios" branch
+
+	cd milkymist-mmu && git checkout mmu-bios
+
+3°) Modify software/mmu-bios/ files as you wish
+
+	cd software/mmu-bios && vim crt0.S
+
+4°) Compile your changes
+
+	make
+
+5°) Copy bios.bin to milkymist-mmu-simulation directory
+
+	cp bios.bin ~/dev/whatever/PATH/milkymist-mmu-simulation/
+
+6°) Compile h2a tool which is necessary to convert bios.bin to ram.data
+
+	cd ~/dev/whatever/PATH/milkymist-mmu-simulation/
+	make tools
+	export PATH=~/dev/whatever/PATH/milkymist-mmu-simulation/tools/h2a/
+
+7°) Convert bios.bin to ram.data
+
+	rm ram.data
+	make ram
+
+8°) Restart simulation
+
+	make clean
+	make
