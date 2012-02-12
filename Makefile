@@ -29,13 +29,24 @@ PROJECT = soc.prj
 
 all: simulation
 
-simulation: soc
+simulation: soc ram.data
 	./soc -gui -view soc.wcfg
 
 soc: $(SOURCE) $(PROJECT)
 	fuse -intstyle ise -o soc -prj soc.prj --timescale 1ns/1ns soc
 
+tools:
+	$(MAKE) -C tools/h2a/
+
+ram: ram.data
+
+ram.data: bios.bin
+	h2a bios.bin > ram.data
+
 clean:
 	rm -rf soc isim isim.* fuse.* fuseRelaunch.cmd
 
-.PHONY: clean simulation all
+cleanall: clean
+	$(MAKE) -C tools/h2a/ clean
+
+.PHONY: clean cleanall simulation all tools ram
