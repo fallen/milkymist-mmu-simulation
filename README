@@ -12,9 +12,10 @@ In the next lines I will take for granted that you installed Xilinx ISE under /o
 
 	source /opt/Xilinx/13.4/ISE_DS/settings32.sh
 
-3°) Copy ram.data file into working directory
+3°) Copy ram.data and bios.bin files into working directory
 
 	cp software/ram.data .
+	cp software/bios.bin .
 
 4°) Run make
 
