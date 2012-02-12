@@ -3,14 +3,16 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 
 int main(int argc, char **argv) {
 	FILE *fp;
 	unsigned char c;
 	unsigned char i = 0;
+	unsigned int line = 0;
 
 	if (argc < 2) {
-		printf("usage : %s file\n", argv[0]);
+		printf("usage : %s file [max_padding_addr]\n", argv[0]);
 		return -1;
 	}
 
@@ -25,10 +27,28 @@ int main(int argc, char **argv) {
 	{
 		c = fgetc(fp);
 		printf("%02X", c);
-		if (i == 3)
+		if (i == 3) {
 			puts("");
+			++line;
+		}
 		i++;
 		i %= 4;
+	}
+
+	if (argc == 3) {
+		unsigned int padding;
+		unsigned int j;
+		unsigned int max;
+
+		padding = atoi(argv[2]);
+
+		if (padding <= line)
+			return 0;
+
+		max = padding - line;
+
+		for (j = 0 ; j < max ; ++j)
+			printf("%08X\n", j);
 	}
 
 	fclose(fp);
