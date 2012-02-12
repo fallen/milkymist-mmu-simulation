@@ -7,7 +7,7 @@
 
 int main(int argc, char **argv) {
 	FILE *fp;
-	unsigned char c;
+	int c;
 	unsigned char i = 0;
 	unsigned int line = 0;
 
@@ -26,7 +26,9 @@ int main(int argc, char **argv) {
 	while (!feof(fp))
 	{
 		c = fgetc(fp);
-		printf("%02X", c);
+		if (c == -1)
+			break;
+		printf("%02X", (unsigned char)c);
 		if (i == 3) {
 			puts("");
 			++line;
