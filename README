@@ -21,6 +21,19 @@ In the next lines I will take for granted that you installed Xilinx ISE under /o
 
 	make
 
+5°) Select wires and regs you want to add to wave window
+
+6°) Start and break the simulation
+
+	Click on "Simulation", then "Restart" and then "Run All"
+	Wait for something like 200 000 ns
+	Stop the simulation clicking on "Simulation" then "Break"
+
+7°) Look at wave window
+
+	Click on the "Float Window" icone (3 icones left from the "zoom in" icone)
+	Zoom out a few times on the wave window
+
 For more advanced things like the following, please refer to README.advanced file : 
 
 - generating your own bios.bin and ram.data
