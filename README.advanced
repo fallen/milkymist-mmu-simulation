@@ -1,41 +1,46 @@
 I - Generating your own bios.bin and ram.data
 
-1°) Follow README from the bottom of this page to install lm32-binutils-mmu
+1°) Follow README from the bottom of this page to install lm32-binutils-mmu [THIS IS NOT NEEDED ANYMORE]
 
 	https://github.com/fallen/lm32-binutils-mmu
 
-1°) Clone milkymist-mmu repository
+	Thanks to David Kühling you can now edit crt0.S and assemble it with a non-modified lm32-gnu-as and still generate opcodes for new TLB CSR
+	To understand how, and if you think you need to know this, please check this out : https://github.com/fallen/milkymist-mmu/commit/4da6d2b4141751f40b2cd92ef3efd94cdb6a2703
+
+	However, if you want to have a nice lm32-objdump output you can still compile a nice lm32-binutils-mmu, but it's only cosmetic ( ;) ) and not really needed anymore !
+
+2°) Clone milkymist-mmu repository
 
 	git clone git://github.com/fallen/milkymist-mmu.git
 
-2°) Checkout "mmu-bios" branch
+3°) Checkout "mmu-bios" branch
 
 	cd milkymist-mmu && git checkout mmu-bios
 
-3°) Modify software/mmu-bios/ files as you wish
+4°) Modify software/mmu-bios/ files as you wish
 
 	cd software/mmu-bios && vim crt0.S
 
-4°) Compile your changes
+5°) Compile your changes
 
 	make
 
-5°) Copy bios.bin to milkymist-mmu-simulation directory
+6°) Copy bios.bin to milkymist-mmu-simulation directory
 
 	cp bios.bin ~/dev/whatever/PATH/milkymist-mmu-simulation/
 
-6°) Compile h2a tool which is necessary to convert bios.bin to ram.data
+7°) Compile h2a tool which is necessary to convert bios.bin to ram.data
 
 	cd ~/dev/whatever/PATH/milkymist-mmu-simulation/
 	make tools
 	export PATH=~/dev/whatever/PATH/milkymist-mmu-simulation/tools/h2a/
 
-7°) Convert bios.bin to ram.data
+8°) Convert bios.bin to ram.data
 
 	rm ram.data
 	make ram
 
-8°) Restart simulation
+9°) Restart simulation
 
 	make clean
 	make
