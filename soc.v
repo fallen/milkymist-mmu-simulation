@@ -351,6 +351,11 @@ always @(posedge clkfx_sys_clkout) begin
 	memadr <= frag_partial_adr;
 end
 
+always @(posedge clkfx_sys_clkout) begin
+	if ( |frag_we )
+		$display("Writting 0x%08X to 0x%08X at time %d\n", sram0_wishbone_dat_i, frag_partial_adr, $time);
+end
+
 initial
 begin
        $readmemh("ram.data", mem);
