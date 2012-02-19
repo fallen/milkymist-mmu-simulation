@@ -544,9 +544,9 @@ begin
 end
 
 // tlb_update_address will receive data from a CSR register
-assign dtlb_data_write_address = dtlb_update_vaddr_csr_reg[`LM32_DTLB_IDX_RNG]; /* (dtlb_updating == `TRUE)
-				 ? dtlb_update_set
-				 : dtlb_update_vaddr_csr_reg[`LM32_DTLB_IDX_RNG]; */
+assign dtlb_data_write_address = /*(dtlb_flushing == `TRUE) 
+				 ? dtlb_flush_set
+				 : */dtlb_update_vaddr_csr_reg[`LM32_DTLB_IDX_RNG];
 
 assign dtlb_tag_write_address = (dtlb_flushing == `TRUE)
 				? dtlb_flush_set
