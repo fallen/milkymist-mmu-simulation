@@ -9,10 +9,10 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="106" />
+   <WVObjectSize size="107" />
    <wvobject fp_name="/soc/memadr" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">memadr[12:0]</obj_property>
-      <obj_property name="ObjectShortName">memadr[12:0]</obj_property>
+      <obj_property name="ElementShortName">memadr[13:0]</obj_property>
+      <obj_property name="ObjectShortName">memadr[13:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/soc/lm32/I_DAT_I" type="array" db_ref_id="1">
@@ -54,6 +54,11 @@
    <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/stall_m" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">stall_m</obj_property>
       <obj_property name="ObjectShortName">stall_m</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/physical_address" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">physical_address[31:0]</obj_property>
+      <obj_property name="ObjectShortName">physical_address[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/address_x" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">address_x[31:0]</obj_property>
