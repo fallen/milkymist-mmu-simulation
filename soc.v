@@ -26,15 +26,15 @@ wire cpu0_ibus_wishbone_cyc_o;
 wire [3:0] cpu0_dbus_wishbone_sel_o;
 wire [31:0] cpu0__inst_I_ADR_O;
 wire cpu0_dbus_wishbone_ack_i;
-wire [29:0] sram0_wishbone_adr_i;
+wire [31:0] sram0_wishbone_adr_i;
 wire cpu0_dbus_wishbone_err_i;
 reg wishbonecon0_grant;
-wire [29:0] cpu0_ibus_wishbone_adr_o;
+wire [31:0] cpu0_ibus_wishbone_adr_o;
 wire [31:0] sram0_wishbone_dat_i;
 wire cpu0_dbus_wishbone_stb_o;
 reg frag_slave_sel_r;
 wire [1:0] sram0_wishbone_bte_i;
-wire [29:0] cpu0_dbus_wishbone_adr_o;
+wire [31:0] cpu0_dbus_wishbone_adr_o;
 wire wishbonecon0_wishbone_ack_i;
 wire [31:0] cpu0_ibus_wishbone_dat_o;
 wire [31:0] sram0_wishbone_dat_o;
@@ -44,7 +44,7 @@ reg [2:0] wishbonecon0_wishbone_cti_o;
 wire sram0_wishbone_cyc_i;
 wire cpu0_dbus_wishbone_we_o;
 reg sram0_wishbone_err_o;
-wire [13:0] frag_partial_adr;
+wire [31:0] frag_partial_adr;
 wire frag_slave_sel;
 wire cpu0_ibus_wishbone_err_i;
 wire [31:0] cpu0_dbus_wishbone_dat_i;
@@ -69,7 +69,7 @@ reg [3:0] frag_we;
 reg wishbonecon0_wishbone_we_o;
 wire [31:0] wishbonecon0_wishbone_dat_i;
 wire cpu0__inst_D_RTY_I;
-reg [29:0] wishbonecon0_wishbone_adr_o;
+reg [31:0] wishbonecon0_wishbone_adr_o;
 wire [3:0] cpu0_ibus_wishbone_sel_o;
 wire cpu0__inst_D_LOCK_O;
 wire [3:0] sram0_wishbone_sel_i;
@@ -95,7 +95,7 @@ always @(*) begin
 	dummy_d <= dummy_s;
 // synthesis translate on
 end
-assign frag_partial_adr = sram0_wishbone_adr_i[13:0];
+assign frag_partial_adr = sram0_wishbone_adr_i[31:0];
 assign clkfx_sys_PSEN = 1'd0;
 assign clkfx_sys_RST = 1'd0;
 assign cpu0__inst_I_RTY_I = 1'd0;
@@ -253,7 +253,7 @@ assign cpu0_dbus_wishbone_ack_i = (wishbonecon0_wishbone_ack_i & (wishbonecon0_g
 assign cpu0_ibus_wishbone_err_i = (wishbonecon0_wishbone_err_i & (wishbonecon0_grant == 1'd0));
 assign cpu0_dbus_wishbone_err_i = (wishbonecon0_wishbone_err_i & (wishbonecon0_grant == 1'd1));
 assign wishbonecon0_request = {cpu0_dbus_wishbone_cyc_o, cpu0_ibus_wishbone_cyc_o};
-assign frag_slave_sel = (wishbonecon0_wishbone_adr_o[28:26] == 3'd0);
+assign frag_slave_sel = /*(wishbonecon0_wishbone_adr_o[28:26] == 3'd0)*/ 1;
 assign sram0_wishbone_adr_i = wishbonecon0_wishbone_adr_o;
 assign sram0_wishbone_dat_i = wishbonecon0_wishbone_dat_o;
 assign sram0_wishbone_sel_i = wishbonecon0_wishbone_sel_o;
@@ -338,22 +338,25 @@ lm32_top lm32(
 );
 
 reg [31:0] mem[0:16383];
-reg [13:0] memadr;
+reg [31:0] memadr;
 always @(posedge clkfx_sys_clkout) begin
 	if (frag_we[0])
-		mem[frag_partial_adr][7:0] <= sram0_wishbone_dat_i[7:0];
+		mem[frag_partial_adr & 32'h2EFFFFFF][7:0] <= sram0_wishbone_dat_i[7:0];
 	if (frag_we[1])
-		mem[frag_partial_adr][15:8] <= sram0_wishbone_dat_i[15:8];
+		mem[frag_partial_adr & 32'h2EFFFFFF][15:8] <= sram0_wishbone_dat_i[15:8];
 	if (frag_we[2])
-		mem[frag_partial_adr][23:16] <= sram0_wishbone_dat_i[23:16];
+		mem[frag_partial_adr & 32'h2EFFFFFF][23:16] <= sram0_wishbone_dat_i[23:16];
 	if (frag_we[3])
-		mem[frag_partial_adr][31:24] <= sram0_wishbone_dat_i[31:24];
-	memadr <= frag_partial_adr;
+		mem[frag_partial_adr & 32'h2EFFFFFF][31:24] <= sram0_wishbone_dat_i[31:24];
+	memadr <= frag_partial_adr & 32'h2EFFFFFF;
 end
 
 always @(posedge clkfx_sys_clkout) begin
 	if ( |frag_we )
-		$display("Writting 0x%08X to 0x%08X at time %d\n", sram0_wishbone_dat_i, frag_partial_adr, $time);
+		if (frag_partial_adr == 32'h11000C00)
+			$write("%c", sram0_wishbone_dat_i[7:0]);
+		else
+			$display("Writting 0x%08X to 0x%08X at time %d\n", sram0_wishbone_dat_i, frag_partial_adr, $time);
 end
 
 initial

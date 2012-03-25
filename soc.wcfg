@@ -9,10 +9,10 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="107" />
+   <WVObjectSize size="112" />
    <wvobject fp_name="/soc/memadr" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">memadr[13:0]</obj_property>
-      <obj_property name="ObjectShortName">memadr[13:0]</obj_property>
+      <obj_property name="ElementShortName">memadr[31:0]</obj_property>
+      <obj_property name="ObjectShortName">memadr[31:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/soc/lm32/I_DAT_I" type="array" db_ref_id="1">
@@ -28,6 +28,11 @@
    <wvobject fp_name="/soc/lm32/D_DAT_O" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">D_DAT_O[31:0]</obj_property>
       <obj_property name="ObjectShortName">D_DAT_O[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/I_ADR_O" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">I_ADR_O[31:0]</obj_property>
+      <obj_property name="ObjectShortName">I_ADR_O[31:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/soc/lm32/D_ADR_O" type="array" db_ref_id="1">
@@ -485,5 +490,23 @@
    <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/csr_write_enable" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">csr_write_enable</obj_property>
       <obj_property name="ObjectShortName">csr_write_enable</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/latest_store_tlb_lookup" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">latest_store_tlb_lookup[31:0]</obj_property>
+      <obj_property name="ObjectShortName">latest_store_tlb_lookup[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/csr_read_data" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">csr_read_data[31:0]</obj_property>
+      <obj_property name="ObjectShortName">csr_read_data[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache_select_m" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">dcache_select_m</obj_property>
+      <obj_property name="ObjectShortName">dcache_select_m</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/I_ADR_O" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">I_ADR_O[31:0]</obj_property>
+      <obj_property name="ObjectShortName">I_ADR_O[31:0]</obj_property>
    </wvobject>
 </wave_config>
