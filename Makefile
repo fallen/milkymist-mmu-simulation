@@ -38,8 +38,6 @@ soc: $(SOURCE) $(PROJECT)
 tools:
 	$(MAKE) -C tools/h2a/
 
-ram: ram.data
-
 ram.data: bios.bin
 	h2a bios.bin > ram.data
 
@@ -49,4 +47,4 @@ clean:
 cleanall: clean
 	$(MAKE) -C tools/h2a/ clean
 
-.PHONY: clean cleanall simulation all tools ram
+.PHONY: clean cleanall simulation all tools
