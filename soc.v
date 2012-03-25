@@ -352,10 +352,28 @@ always @(posedge clkfx_sys_clkout) begin
 	memadr <= frag_partial_adr & 32'h2EFFFFFF;
 end
 
+reg do_print = 0;
+reg [3:0] previous_frag_we = 4'd0;
+
+always @(posedge clkfx_sys_clkout) begin
+	previous_frag_we <= frag_we;
+	if ( (|previous_frag_we) == 0 && |frag_we)
+		do_print <= 1;
+	else if (|previous_frag_we == |frag_we)
+		do_print <= 0;
+	else
+		do_print <= 0;
+end
+
 always @(posedge clkfx_sys_clkout) begin
 	if ( |frag_we )
 		if (frag_partial_adr == 32'h11000C00)
-			$write("%c", sram0_wishbone_dat_i[7:0]);
+		begin
+			if (do_print)
+			begin
+				$write("%c", sram0_wishbone_dat_i[7:0]);
+			end
+		end
 		else
 			$display("Writting 0x%08X to 0x%08X at time %d\n", sram0_wishbone_dat_i, frag_partial_adr, $time);
 end
