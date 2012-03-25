@@ -274,7 +274,8 @@ always @(posedge clkfx_sys_clkout) begin
 	end else begin
 		sram0_wishbone_ack_o <= 1'd0;
 		if (((sram0_wishbone_cyc_i & sram0_wishbone_stb_i) & (~sram0_wishbone_ack_o))) begin
-			sram0_wishbone_ack_o <= 1'd1;
+			if ($random() % 2)
+				sram0_wishbone_ack_o <= 1'd1;
 		end
 		case (wishbonecon0_grant)
 			1'd0: begin
