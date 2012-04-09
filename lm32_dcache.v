@@ -728,6 +728,7 @@ begin
 			begin
 				// FIXME : We need to generate an exception
 				dtlb_miss_addr <= address_m;
+				$display("ERROR : DTLB MISS on addr 0x%08X", address_m);
 			end
 			else if (csr_write_enable && csr_write_data[0])
 			begin
