@@ -9,7 +9,7 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="112" />
+   <WVObjectSize size="113" />
    <wvobject fp_name="/soc/memadr" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">memadr[31:0]</obj_property>
       <obj_property name="ObjectShortName">memadr[31:0]</obj_property>
@@ -20,6 +20,11 @@
       <obj_property name="ObjectShortName">I_DAT_I[31:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/I_ADR_O" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">I_ADR_O[31:0]</obj_property>
+      <obj_property name="ObjectShortName">I_ADR_O[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
    <wvobject fp_name="/soc/lm32/D_DAT_I" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">D_DAT_I[31:0]</obj_property>
       <obj_property name="ObjectShortName">D_DAT_I[31:0]</obj_property>
@@ -28,11 +33,6 @@
    <wvobject fp_name="/soc/lm32/D_DAT_O" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">D_DAT_O[31:0]</obj_property>
       <obj_property name="ObjectShortName">D_DAT_O[31:0]</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
-   </wvobject>
-   <wvobject fp_name="/soc/lm32/cpu/I_ADR_O" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">I_ADR_O[31:0]</obj_property>
-      <obj_property name="ObjectShortName">I_ADR_O[31:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/soc/lm32/D_ADR_O" type="array" db_ref_id="1">
@@ -59,6 +59,10 @@
    <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/stall_m" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">stall_m</obj_property>
       <obj_property name="ObjectShortName">stall_m</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/d_adr_o_sampling" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">d_adr_o_sampling</obj_property>
+      <obj_property name="ObjectShortName">d_adr_o_sampling</obj_property>
    </wvobject>
    <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/physical_address" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">physical_address[31:0]</obj_property>
@@ -403,9 +407,9 @@
       <obj_property name="ElementShortName">dtlb_miss</obj_property>
       <obj_property name="ObjectShortName">dtlb_miss</obj_property>
    </wvobject>
-   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_miss_addr" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">dtlb_miss_addr</obj_property>
-      <obj_property name="ObjectShortName">dtlb_miss_addr</obj_property>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_miss_addr" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">dtlb_miss_addr[31:0]</obj_property>
+      <obj_property name="ObjectShortName">dtlb_miss_addr[31:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_read_data" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">dtlb_read_data[19:0]</obj_property>
@@ -508,5 +512,6 @@
    <wvobject fp_name="/soc/lm32/cpu/I_ADR_O" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">I_ADR_O[31:0]</obj_property>
       <obj_property name="ObjectShortName">I_ADR_O[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
 </wave_config>
