@@ -2218,7 +2218,7 @@ begin
 end
 `endif
 
-// Valid bits to indicate whether an instruction in a partcular pipeline stage is valid or not  
+// Valid bits to indicate whether an instruction in a particular pipeline stage is valid or not
 
 `ifdef CFG_ICACHE_ENABLED
 `ifdef CFG_DCACHE_ENABLED
