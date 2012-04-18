@@ -273,6 +273,7 @@ reg dcache_select_m;
 wire [`LM32_WORD_RNG] dcache_data_m;                    // Data read from cache
 wire [`LM32_WORD_RNG] dcache_refill_address;            // Address to refill data cache from
 reg dcache_refill_ready;                                // Indicates the next word of refill data is ready
+reg d_adr_o_sampling;
 wire [`LM32_CTYPE_RNG] first_cycle_type;                // First Wishbone cycle type
 wire [`LM32_CTYPE_RNG] next_cycle_type;                 // Next Wishbone cycle type
 wire last_word;                                         // Indicates if this is the last word in the cache line
@@ -654,6 +655,7 @@ always @(posedge clk_i `CFG_RESET_SENSITIVITY)
 begin
     if (rst_i == `TRUE)
     begin
+        d_adr_o_sampling <= `FALSE;
         d_cyc_o <= `FALSE;
         d_stb_o <= `FALSE;
         d_dat_o <= {`LM32_WORD_WIDTH{1'b0}};
@@ -690,6 +692,7 @@ begin
                 else
 `endif                
                 begin
+		    d_adr_o_sampling <= 0;
                     // Refill/access complete
                     d_cyc_o <= `FALSE;
                     d_stb_o <= `FALSE;
@@ -719,6 +722,7 @@ begin
 `ifdef CFG_VERBOSE_DISPLAY_ENABLED
 		$display("Sampling address to refill 0x%08X\n", first_address);
 `endif
+		d_adr_o_sampling <= 1;
                 d_adr_o <= first_address;
                 d_cyc_o <= `TRUE;
                 d_sel_o <= {`LM32_WORD_WIDTH/8{`TRUE}};
@@ -743,6 +747,7 @@ begin
 `ifdef CFG_VERBOSE_DISPLAY_ENABLED
 		$display("Sampling address to write through 0x%08X\n", store_data_m);
 `endif
+		d_adr_o_sampling <= 1;
                 d_dat_o <= store_data_m;
                 d_adr_o <= (kernel_mode == `LM32_KERNEL_MODE) ? load_store_address_m : physical_address;
                 d_cyc_o <= `TRUE;
@@ -761,6 +766,7 @@ begin
 `ifdef CFG_VERBOSE_DISPLAY_ENABLED
 		$display("Sampling address to read 0x%08X\n", (kernel_mode == `LM32_KERNEL_MODE) ? load_store_address_m : physical_address);
 `endif
+		d_adr_o_sampling <= 1;
                 stall_wb_load <= `FALSE;
                 d_adr_o <= (kernel_mode == `LM32_KERNEL_MODE) ? load_store_address_m : physical_address;
                 d_cyc_o <= `TRUE;
