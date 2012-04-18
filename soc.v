@@ -1,4 +1,7 @@
 /* Machine-generated using Migen */
+
+`include "lm32_include.v"
+
 module soc(
 	input clkfx_sys_clkin,
 	output reset0_ac97_rst_n,
@@ -274,7 +277,9 @@ always @(posedge clkfx_sys_clkout) begin
 	end else begin
 		sram0_wishbone_ack_o <= 1'd0;
 		if (((sram0_wishbone_cyc_i & sram0_wishbone_stb_i) & (~sram0_wishbone_ack_o))) begin
+`ifdef CFG_RANDOM_WISHBONE_LATENCY
 			if ($random() % 2)
+`endif
 				sram0_wishbone_ack_o <= 1'd1;
 		end
 		case (wishbonecon0_grant)
@@ -369,13 +374,17 @@ always @(posedge clkfx_sys_clkout) begin
 	if ( |frag_we )
 		if (frag_partial_adr == 32'h11000C00)
 		begin
+`ifdef CFG_UART_ENABLED
 			if (do_print)
 			begin
 				$write("%c", sram0_wishbone_dat_i[7:0]);
 			end
+`endif
 		end
+`ifdef CFG_VERBOSE_DISPLAY_ENABLED
 		else
 			$display("Writting 0x%08X to 0x%08X at time %d\n", sram0_wishbone_dat_i, frag_partial_adr, $time);
+`endif
 end
 
 initial

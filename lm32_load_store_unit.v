@@ -716,6 +716,9 @@ begin
             if (dcache_refill_request == `TRUE)
             begin
                 // Start cache refill
+`ifdef CFG_VERBOSE_DISPLAY_ENABLED
+		$display("Sampling address to refill 0x%08X\n", first_address);
+`endif
                 d_adr_o <= first_address;
                 d_cyc_o <= `TRUE;
                 d_sel_o <= {`LM32_WORD_WIDTH/8{`TRUE}};
@@ -737,6 +740,9 @@ begin
                     )
             begin
                 // Data cache is write through, so all stores go to memory
+`ifdef CFG_VERBOSE_DISPLAY_ENABLED
+		$display("Sampling address to write through 0x%08X\n", store_data_m);
+`endif
                 d_dat_o <= store_data_m;
                 d_adr_o <= (kernel_mode == `LM32_KERNEL_MODE) ? load_store_address_m : physical_address;
                 d_cyc_o <= `TRUE;
@@ -752,6 +758,9 @@ begin
                     )
             begin
                 // Read requested address
+`ifdef CFG_VERBOSE_DISPLAY_ENABLED
+		$display("Sampling address to read 0x%08X\n", (kernel_mode == `LM32_KERNEL_MODE) ? load_store_address_m : physical_address);
+`endif
                 stall_wb_load <= `FALSE;
                 d_adr_o <= (kernel_mode == `LM32_KERNEL_MODE) ? load_store_address_m : physical_address;
                 d_cyc_o <= `TRUE;

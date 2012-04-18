@@ -96,6 +96,12 @@
 //`define CFG_WATCHPOINTS 32'h4
 //`define CFG_EXTERNAL_BREAK_ENABLED
 //`define CFG_GDBSTUB_ENABLED
+//`define CFG_RANDOM_WISHBONE_LATENCY
+//`define CFG_VERBOSE_DISPLAY_ENABLED
+`define CFG_UART_ENABLED
+
+// Enable MMU
+`define CFG_MMU_ENABLED
 
 //
 // End of common configuration options
@@ -240,7 +246,11 @@
 `define LM32_ADDRESS_LSBS_WIDTH         2
 
 // Width and range of a CSR index
-/*`ifdef CFG_DEBUG_ENABLED
+`ifdef CFG_MMU_ENABLED
+`define LM32_CSR_WIDTH                  5
+`define LM32_CSR_RNG                    (`LM32_CSR_WIDTH-1):0
+`else
+`ifdef CFG_DEBUG_ENABLED
 `define LM32_CSR_WIDTH                  5
 `define LM32_CSR_RNG                    (`LM32_CSR_WIDTH-1):0
 `else
@@ -252,10 +262,7 @@
 `define LM32_CSR_RNG                    (`LM32_CSR_WIDTH-1):0
 `endif
 `endif
-*/
-`define LM32_CSR_WIDTH			5
-`define LM32_CSR_RNG                    (`LM32_CSR_WIDTH-1):0
-
+`endif
 
 // CSR indices
 `define LM32_CSR_IE                     `LM32_CSR_WIDTH'h0
@@ -284,11 +291,13 @@
 `define LM32_CSR_WP1                    `LM32_CSR_WIDTH'h19
 `define LM32_CSR_WP2                    `LM32_CSR_WIDTH'h1a
 `define LM32_CSR_WP3                    `LM32_CSR_WIDTH'h1b
-`endif 
+`endif
+`ifdef CFG_MMU_ENABLED
 `define LM32_CSR_TLB_CTRL		`LM32_CSR_WIDTH'h1c
 `define LM32_CSR_TLB_VADDRESS		`LM32_CSR_WIDTH'h1d
 `define LM32_CSR_TLB_PADDRESS		`LM32_CSR_WIDTH'h1e
 `define LM32_CSR_TLB_DBG		`LM32_CSR_WIDTH'h1f
+`endif
 
 // Values for WPC CSR
 `define LM32_WPC_C_RNG                  1:0

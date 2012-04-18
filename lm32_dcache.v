@@ -319,6 +319,7 @@ lm32_ram
      .read_data (dtlb_read_data)
      );
 
+`ifdef CFG_VERBOSE_DISPLAY_ENABLED
 always @(posedge clk_i)
 begin
 	if (dtlb_write_port_enable)
@@ -327,6 +328,7 @@ begin
 		$display("[DTLB tag : %d] Writing 0x%08X to 0x%08X", $time, dtlb_write_tag, dtlb_tag_write_address);
 	end
 end
+`endif
 
 lm32_ram 
   #(
