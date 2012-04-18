@@ -58,13 +58,13 @@
 // Common configuration options
 //
 
-//`ifdef RESCUE
+`ifdef RESCUE
+`define CFG_EBA_RESET 32'h00220000
+`define CFG_DEBA_RESET 32'h10000000
+`else
 `define CFG_EBA_RESET 32'h44000000
 `define CFG_DEBA_RESET 32'h44000000
-/*`else
-`define CFG_EBA_RESET 32'h00860000
-`define CFG_DEBA_RESET 32'h10000000
-`endif */
+`endif
 
 `define CFG_PL_MULTIPLY_ENABLED
 `define CFG_PL_BARREL_SHIFT_ENABLED
