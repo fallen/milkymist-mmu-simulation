@@ -288,6 +288,7 @@
 `define LM32_CSR_TLB_CTRL		`LM32_CSR_WIDTH'h1c
 `define LM32_CSR_TLB_VADDRESS		`LM32_CSR_WIDTH'h1d
 `define LM32_CSR_TLB_PADDRESS		`LM32_CSR_WIDTH'h1e
+`define LM32_CSR_TLB_DBG		`LM32_CSR_WIDTH'h1f
 
 // Values for WPC CSR
 `define LM32_WPC_C_RNG                  1:0
