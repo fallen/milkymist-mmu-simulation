@@ -80,6 +80,7 @@ module lm32_load_store_unit (
     kill_x,
     kill_m,
     exception_m,
+    exception_x,
     store_operand_x,
     load_store_address_x,
     load_store_address_m,
@@ -101,6 +102,7 @@ module lm32_load_store_unit (
     csr,
     csr_write_data,
     csr_write_enable,
+    eret_q_x,
     // From Wishbone
     d_dat_i,
     d_ack_i,
@@ -164,6 +166,9 @@ input stall_m;                                          // M stage stall
 input kill_x;                                           // Kill instruction in X stage
 input kill_m;                                           // Kill instruction in M stage
 input exception_m;                                      // An exception occured in the M stage
+input exception_x;                                      // An exception occured in the X stage
+input eret_q_x;
+
 
 input [`LM32_CSR_RNG] csr;				// CSR read/write index
 input [`LM32_WORD_RNG] csr_write_data;			// Data to write to specified CSR
@@ -191,7 +196,8 @@ input dflush;                                           // Flush the data cache
 input [`LM32_WORD_RNG] irom_data_m;                     // Data from Instruction-ROM
 `endif
 
-input dtlb_miss;
+wire dtlb_miss;
+output dtlb_miss;
 
 input [`LM32_WORD_RNG] d_dat_i;                         // Data Wishbone interface read data
 input d_ack_i;                                          // Data Wishbone interface acknowledgement
@@ -421,6 +427,8 @@ lm32_dcache #(
     .csr		    (csr),
     .csr_write_data	    (csr_write_data),
     .csr_write_enable	    (csr_write_enable),
+    .exception_x	    (exception_x),
+    .eret_q_x		    (eret_q_x),
     // ----- Outputs -----
     .stall_request          (dcache_stall_request),
     .restart_request        (dcache_restart_request),
@@ -428,7 +436,8 @@ lm32_dcache #(
     .refill_address         (dcache_refill_address),
     .refilling              (dcache_refilling),
     .load_data              (dcache_data_m),
-    .dtlb_miss		    (dtlb_miss),
+//    .dtlb_miss		    (dtlb_miss),
+    .dtlb_miss_q	    (dtlb_miss),
     .kernel_mode	    (kernel_mode),
     .pa			    (physical_address),
     .csr_read_data	    (csr_read_data)

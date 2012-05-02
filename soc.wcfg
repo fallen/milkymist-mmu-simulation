@@ -9,7 +9,7 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="113" />
+   <WVObjectSize size="149" />
    <wvobject fp_name="/soc/memadr" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">memadr[31:0]</obj_property>
       <obj_property name="ObjectShortName">memadr[31:0]</obj_property>
@@ -410,6 +410,7 @@
    <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_miss_addr" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">dtlb_miss_addr[31:0]</obj_property>
       <obj_property name="ObjectShortName">dtlb_miss_addr[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_read_data" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">dtlb_read_data[19:0]</obj_property>
@@ -513,5 +514,156 @@
       <obj_property name="ElementShortName">I_ADR_O[31:0]</obj_property>
       <obj_property name="ObjectShortName">I_ADR_O[31:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/eid_x" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">eid_x[3:0]</obj_property>
+      <obj_property name="ObjectShortName">eid_x[3:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/exception_m" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">exception_m</obj_property>
+      <obj_property name="ObjectShortName">exception_m</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/exception_w" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">exception_w</obj_property>
+      <obj_property name="ObjectShortName">exception_w</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/exception_x" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">exception_x</obj_property>
+      <obj_property name="ObjectShortName">exception_x</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_miss_q" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">dtlb_miss_q</obj_property>
+      <obj_property name="ObjectShortName">dtlb_miss_q</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/branch_target_d" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">branch_target_d[31:2]</obj_property>
+      <obj_property name="ObjectShortName">branch_target_d[31:2]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/branch_target_m" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">branch_target_m[31:2]</obj_property>
+      <obj_property name="ObjectShortName">branch_target_m[31:2]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/branch_target_x" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">branch_target_x[31:2]</obj_property>
+      <obj_property name="ObjectShortName">branch_target_x[31:2]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/eba" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">eba[31:8]</obj_property>
+      <obj_property name="ObjectShortName">eba[31:8]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/eba_reset" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">eba_reset[31:0]</obj_property>
+      <obj_property name="ObjectShortName">eba_reset[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/branch_reg_d" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">branch_reg_d</obj_property>
+      <obj_property name="ObjectShortName">branch_reg_d</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/reg_data_0" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">reg_data_0[31:0]</obj_property>
+      <obj_property name="ObjectShortName">reg_data_0[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/switch_to_kernel_mode" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">switch_to_kernel_mode</obj_property>
+      <obj_property name="ObjectShortName">switch_to_kernel_mode</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/switch_to_user_mode" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">switch_to_user_mode</obj_property>
+      <obj_property name="ObjectShortName">switch_to_user_mode</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/eret_d" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">eret_d</obj_property>
+      <obj_property name="ObjectShortName">eret_d</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/eret_q_x" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">eret_q_x</obj_property>
+      <obj_property name="ObjectShortName">eret_q_x</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/eret_m" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">eret_m</obj_property>
+      <obj_property name="ObjectShortName">eret_m</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/eret_x" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">eret_x</obj_property>
+      <obj_property name="ObjectShortName">eret_x</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/decoder/eret" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">eret</obj_property>
+      <obj_property name="ObjectShortName">eret</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_miss_q" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">dtlb_miss_q</obj_property>
+      <obj_property name="ObjectShortName">dtlb_miss_q</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/q_x" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">q_x</obj_property>
+      <obj_property name="ObjectShortName">q_x</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/kill_x" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">kill_x</obj_property>
+      <obj_property name="ObjectShortName">kill_x</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/valid_x" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">valid_x</obj_property>
+      <obj_property name="ObjectShortName">valid_x</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/valid_d" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">valid_d</obj_property>
+      <obj_property name="ObjectShortName">valid_d</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/stall_d" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">stall_d</obj_property>
+      <obj_property name="ObjectShortName">stall_d</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/kill_d" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">kill_d</obj_property>
+      <obj_property name="ObjectShortName">kill_d</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/stall_f" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">stall_f</obj_property>
+      <obj_property name="ObjectShortName">stall_f</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/valid_f" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">valid_f</obj_property>
+      <obj_property name="ObjectShortName">valid_f</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/kill_f" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">kill_f</obj_property>
+      <obj_property name="ObjectShortName">kill_f</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/branch_taken_m" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">branch_taken_m</obj_property>
+      <obj_property name="ObjectShortName">branch_taken_m</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/valid_m" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">valid_m</obj_property>
+      <obj_property name="ObjectShortName">valid_m</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/condition_met_m" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">condition_met_m</obj_property>
+      <obj_property name="ObjectShortName">condition_met_m</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/branch_predict_m" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">branch_predict_m</obj_property>
+      <obj_property name="ObjectShortName">branch_predict_m</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/branch_predict_taken_m" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">branch_predict_taken_m</obj_property>
+      <obj_property name="ObjectShortName">branch_predict_taken_m</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/dcache_refill_request" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">dcache_refill_request</obj_property>
+      <obj_property name="ObjectShortName">dcache_refill_request</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/icache_refill_request" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">icache_refill_request</obj_property>
+      <obj_property name="ObjectShortName">icache_refill_request</obj_property>
    </wvobject>
 </wave_config>
