@@ -155,6 +155,17 @@ localparam addr_dtlb_tag_lsb = addr_dtlb_index_msb + 1;
 localparam addr_dtlb_tag_msb = addr_dtlb_tag_lsb + addr_dtlb_tag_width - 1;
 
 `define LM32_DTLB_TAG_INVALID		{ addr_dtlb_tag_width{ 1'b0 } }
+`define LM32_DTLB_LOOKUP_RANGE		vpfn_width-1:0
+
+/* The following define is the range containing the TAG inside the dtlb_read_data wire which contains the DTLB value from BlockRAM
+ * Indeed dtlb_read_data contains { VALID_BIT, TAG_VALUE, LOOKUP_VALUE }
+ * LM32_DTLB_TAG_RANGE is the range to extract the TAG_VALUE */
+`define LM32_DTLB_TAG_RANGE		vpfn_width+addr_dtlb_tag_width-1:vpfn_width
+
+/* The following define is the range containing the TAG inside a memory address like dtlb_update_vaddr_csr_reg for instance. */
+`define LM32_DTLB_ADDR_TAG_RNG		addr_dtlb_tag_msb:addr_dtlb_tag_lsb
+`define LM32_DTLB_VALID_BIT		vpfn_width+addr_dtlb_tag_width
+
 
 localparam addr_offset_width = clogb2(bytes_per_line)-1-2;
 localparam addr_set_width = clogb2(sets)-1;
@@ -259,14 +270,9 @@ wire [addr_dtlb_index_width-1:0] dtlb_data_read_address;
 wire [addr_dtlb_index_width-1:0] dtlb_data_write_address;
 wire dtlb_data_read_port_enable;
 wire dtlb_write_port_enable;
-wire [vpfn_width-1:0] dtlb_write_data;
-wire [vpfn_width-1:0] dtlb_read_data;
+wire [vpfn_width + addr_dtlb_tag_width + 1 - 1:0] dtlb_write_data; // +1 is for valid_bit
+wire [vpfn_width + addr_dtlb_tag_width + 1 - 1:0] dtlb_read_data; // +1 is for valid_bit
 
-wire [addr_dtlb_index_width-1:0] dtlb_tag_read_address;
-wire dtlb_tag_read_port_enable;
-wire [addr_dtlb_index_width-1:0] dtlb_tag_write_address;
-wire [9:0] dtlb_write_tag;
-wire [9:0] dtlb_read_tag;
 wire [`LM32_WORD_RNG] physical_address;
 
 wire [`LM32_WORD_RNG] pa;
@@ -290,6 +296,8 @@ wire dtlb_miss;
 reg dtlb_miss_q = 0;
 reg dtlb_miss_int = 0;
 reg [`LM32_WORD_RNG] dtlb_miss_addr;
+wire dtlb_data_valid;
+wire [`LM32_DTLB_LOOKUP_RANGE] dtlb_lookup;
 
 genvar i, j;
 
@@ -310,7 +318,7 @@ assign kernel_mode = kernel_mode_reg;
 lm32_ram 
   #(
     // ----- Parameters -------
-    .data_width (vpfn_width),
+    .data_width (vpfn_width + addr_dtlb_tag_width + 1),
     .address_width (addr_dtlb_index_width)
 // Modified for Milkymist: removed non-portable RAM parameters
     ) dtlb_data_ram 
@@ -335,33 +343,10 @@ begin
 	if (dtlb_write_port_enable)
 	begin
 		$display("[DTLB data : %d] Writing 0x%08X to 0x%08X", $time, dtlb_write_data, dtlb_data_write_address);
-		$display("[DTLB tag : %d] Writing 0x%08X to 0x%08X", $time, dtlb_write_tag, dtlb_tag_write_address);
 	end
 end
 `endif
 
-lm32_ram 
-  #(
-    // ----- Parameters -------
-    .data_width (addr_dtlb_tag_width),
-    .address_width (addr_dtlb_index_width)
-// Modified for Milkymist: removed non-portable RAM parameters
-    ) dtlb_tag_ram 
-    (
-     // ----- Inputs -------
-     .read_clk (clk_i),
-     .write_clk (clk_i),
-     .reset (rst_i),
-     .read_address (dtlb_tag_read_address),
-     .enable_read (dtlb_tag_read_port_enable),
-     .write_address (dtlb_tag_write_address),
-     .enable_write (`TRUE),
-     .write_enable (dtlb_write_port_enable),
-     .write_data (dtlb_write_tag),    
-     // ----- Outputs -------
-     .read_data (dtlb_read_tag)
-     );
-    
    generate
       for (i = 0; i < associativity; i = i + 1)    
 	begin : memories
@@ -473,11 +458,14 @@ generate
 // FIXME : We need to put physical address coming out from MMU instead of address_m[]
 //assign way_match[i] = ({way_tag[i], way_valid[i]} == {address_m[`LM32_DC_ADDR_TAG_RNG], `TRUE});
 
+assign dtlb_read_tag = dtlb_read_data[`LM32_DTLB_TAG_RANGE];
+assign dtlb_data_valid = dtlb_read_data[`LM32_DTLB_VALID_BIT];
+assign dtlb_lookup = dtlb_read_data[`LM32_DTLB_LOOKUP_RANGE];
+
 assign way_match[i] = (kernel_mode_reg == `LM32_KERNEL_MODE) ?
 		      ({way_tag[i], way_valid[i]} == {address_m[`LM32_DC_ADDR_TAG_RNG], `TRUE})
-		      : (dtlb_read_tag == `LM32_DTLB_TAG_INVALID || dtlb_read_data == `LM32_DTLB_INVALID_ADDRESS) ?
-		      `FALSE
-		      : ({way_tag[i], way_valid[i]} == {dtlb_read_data, `TRUE});
+		      : /*dtlb_data_valid && (dtlb_read_tag == address_m[`LM32_DC_ADDR_TAG_RNG]) && 
+		     */ ({way_tag[i], way_valid[i]} == {dtlb_lookup, `TRUE});
 
 /*always @(*)
 begin
@@ -574,11 +562,11 @@ assign dtlb_write_tag = (dtlb_flushing == `TRUE)
 
 assign physical_address = (kernel_mode_reg == `LM32_KERNEL_MODE)
 			    ? address_m
-			    : { dtlb_read_data , address_m[`LM32_PAGE_OFFSET_RNG] };
+			    : {dtlb_lookup, address_m[`LM32_PAGE_OFFSET_RNG]};
 
 assign dtlb_write_data = (dtlb_flushing == `TRUE)
-			 ? `LM32_DTLB_INVALID_ADDRESS
-			 : dtlb_update_paddr_csr_reg[`LM32_DTLB_ADDRESS_PFN_RNG];
+			 ? {`FALSE, {addr_dtlb_tag_width{1'b0}}, {vpfn_width{1'b0}}}
+			 : {`TRUE, {dtlb_update_vaddr_csr_reg[`LM32_DTLB_ADDR_TAG_RNG]}, dtlb_update_paddr_csr_reg[`LM32_DTLB_ADDRESS_PFN_RNG]};
 
 // Compute signal to indicate when we are on the last refill accesses
 generate 
@@ -715,7 +703,7 @@ always @(posedge clk_i `CFG_RESET_SENSITIVITY)
 begin
 	if (write_port_enable && (|way_dmem_we))
 	begin
-		latest_store_tlb_lookup <= { dtlb_read_data , address_m[`LM32_PAGE_OFFSET_RNG] };
+		latest_store_tlb_lookup <= {dtlb_lookup, address_m[`LM32_PAGE_OFFSET_RNG]};
 	end
 end
 
@@ -724,7 +712,7 @@ begin
 	csr_read_data <= latest_store_tlb_lookup;
 end
 
-assign dtlb_miss = (kernel_mode_reg == `LM32_USER_MODE) && (load_q_m || store_q_m) && (dtlb_read_tag == `LM32_DTLB_TAG_INVALID || dtlb_read_data == `LM32_DTLB_INVALID_ADDRESS);
+assign dtlb_miss = (kernel_mode_reg == `LM32_USER_MODE) && (load_q_m || store_q_m) && ~(dtlb_data_valid);
 
 always @(posedge clk_i `CFG_RESET_SENSITIVITY)
 begin
