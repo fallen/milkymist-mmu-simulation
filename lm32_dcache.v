@@ -212,7 +212,7 @@ input eret_q_x;
 /////////////////////////////////////////////////////
 
 output csr_read_data;
-reg [`LM32_WORD_RNG] csr_read_data;
+wire [`LM32_WORD_RNG] csr_read_data;
 
 output stall_request;                                   // Request pipeline be stalled because cache is busy
 wire   stall_request;
@@ -721,10 +721,7 @@ begin
 	end
 end
 
-always @(*)
-begin
-	csr_read_data <= latest_store_tlb_lookup;
-end
+assign csr_read_data = latest_store_tlb_lookup;
 
 assign dtlb_miss = (kernel_mode_reg == `LM32_USER_MODE) && (load_q_m || store_q_m) && ~(dtlb_data_valid);
 
