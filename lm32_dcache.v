@@ -434,19 +434,28 @@ end
 /////////////////////////////////////////////////////
 
 // CSR Write
-always @(posedge clk_i)
+always @(posedge clk_i `CFG_RESET_SENSITIVITY)
 begin
-	if (csr_write_enable)
+	if (rst_i == `TRUE)
 	begin
-		case (csr)
-		`LM32_CSR_TLB_CTRL:	if (csr_write_data[0]) dtlb_ctrl_csr_reg[31:1] <= csr_write_data[31:1];
-		`LM32_CSR_TLB_VADDRESS: if (csr_write_data[0]) dtlb_update_vaddr_csr_reg[31:1] <= csr_write_data[31:1];
-		`LM32_CSR_TLB_PADDRESS: if (csr_write_data[0]) dtlb_update_paddr_csr_reg[31:1] <= csr_write_data[31:1];
-		endcase
+		dtlb_ctrl_csr_reg <= `LM32_WORD_WIDTH'd0;
+		dtlb_update_vaddr_csr_reg <= `LM32_WORD_WIDTH'd0;
+		dtlb_update_paddr_csr_reg <= `LM32_WORD_WIDTH'd0;
 	end
-	dtlb_ctrl_csr_reg[0] <= 0;
-	dtlb_update_vaddr_csr_reg[0] <= 0;
-	dtlb_update_paddr_csr_reg[0] <= 0;
+	else
+	begin
+		if (csr_write_enable)
+		begin
+			case (csr)
+			`LM32_CSR_TLB_CTRL:	if (csr_write_data[0]) dtlb_ctrl_csr_reg[31:1] <= csr_write_data[31:1];
+			`LM32_CSR_TLB_VADDRESS: if (csr_write_data[0]) dtlb_update_vaddr_csr_reg[31:1] <= csr_write_data[31:1];
+			`LM32_CSR_TLB_PADDRESS: if (csr_write_data[0]) dtlb_update_paddr_csr_reg[31:1] <= csr_write_data[31:1];
+			endcase
+		end
+		dtlb_ctrl_csr_reg[0] <= 0;
+		dtlb_update_vaddr_csr_reg[0] <= 0;
+		dtlb_update_paddr_csr_reg[0] <= 0;
+	end
 end
 
 
@@ -701,9 +710,14 @@ end
 
 always @(posedge clk_i `CFG_RESET_SENSITIVITY)
 begin
-	if (write_port_enable && (|way_dmem_we))
+	if (rst_i == `TRUE)
+		latest_store_tlb_lookup <= `LM32_WORD_WIDTH'd0;
+	else
 	begin
-		latest_store_tlb_lookup <= {dtlb_lookup, address_m[`LM32_PAGE_OFFSET_RNG]};
+		if (write_port_enable && (|way_dmem_we))
+		begin
+			latest_store_tlb_lookup <= {dtlb_lookup, address_m[`LM32_PAGE_OFFSET_RNG]};
+		end
 	end
 end
 
@@ -716,18 +730,28 @@ assign dtlb_miss = (kernel_mode_reg == `LM32_USER_MODE) && (load_q_m || store_q_
 
 always @(posedge clk_i `CFG_RESET_SENSITIVITY)
 begin
-	if (dtlb_miss)
-		dtlb_miss_int <= 1;
-	else
+	if (rst_i == `TRUE)
 		dtlb_miss_int <= 0;
+	else
+	begin
+		if (dtlb_miss)
+			dtlb_miss_int <= 1;
+		else
+			dtlb_miss_int <= 0;
+	end
 end
 
 always @(posedge clk_i `CFG_RESET_SENSITIVITY)
 begin
-	if (dtlb_miss_int)
-		dtlb_miss_q <= 1;
-	else
+	if (rst_i == `TRUE)
 		dtlb_miss_q <= 0;
+	else
+	begin
+		if (dtlb_miss_int)
+			dtlb_miss_q <= 1;
+		else
+			dtlb_miss_q <= 0;
+	end
 end
 
 always @(posedge clk_i `CFG_RESET_SENSITIVITY)
@@ -738,6 +762,7 @@ begin
 		dtlb_flush_set <= {addr_dtlb_index_width{1'b1}};
 		dtlb_state <= `LM32_TLB_STATE_FLUSH;
 		dtlb_updating <= 0;
+		dtlb_miss_addr <= `LM32_WORD_WIDTH'd0;
 	end
 	else
 	begin
@@ -795,10 +820,15 @@ assign switch_to_user_mode = (csr_write_enable && (csr == `LM32_CSR_TLB_CTRL) &&
 
 always @(posedge clk_i `CFG_RESET_SENSITIVITY)
 begin
-	if (exception_x || switch_to_kernel_mode)
+	if (rst_i == `TRUE)
 		kernel_mode_reg <= `LM32_KERNEL_MODE;
-	else if (eret_q_x || switch_to_user_mode)
-		kernel_mode_reg <= `LM32_USER_MODE;
+	else
+	begin
+		if (exception_x || switch_to_kernel_mode)
+			kernel_mode_reg <= `LM32_KERNEL_MODE;
+		else if (eret_q_x || switch_to_user_mode)
+			kernel_mode_reg <= `LM32_USER_MODE;
+	end
 end
 
 generate
