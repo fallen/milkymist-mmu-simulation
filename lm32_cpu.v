@@ -1850,7 +1850,7 @@ begin
 	if (dtlb_miss_exception == `TRUE )
 		eid_x = `LM32_EID_DTLB_MISS;
 	else
-        	eid_x = `LM32_EID_SCALL;
+		eid_x = `LM32_EID_SCALL;
 end
 
 // Stall generation
