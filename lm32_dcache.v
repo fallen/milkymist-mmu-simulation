@@ -76,10 +76,11 @@
 `define LM32_DC_STATE_CHECK              3'b010
 `define LM32_DC_STATE_REFILL             3'b100
 
-`define LM32_DTLB_CTRL_FLUSH		 	4'h1
-`define LM32_DTLB_CTRL_UPDATE		 	4'h2
-`define LM32_TLB_CTRL_SWITCH_TO_KERNEL_MODE	4'h4
-`define LM32_TLB_CTRL_SWITCH_TO_USER_MODE	4'h8
+`define LM32_DTLB_CTRL_FLUSH		 	5'h1
+`define LM32_DTLB_CTRL_UPDATE		 	5'h2
+`define LM32_TLB_CTRL_SWITCH_TO_KERNEL_MODE	5'h4
+`define LM32_TLB_CTRL_SWITCH_TO_USER_MODE	5'h8
+`define LM32_TLB_CTRL_INVALIDATE_ENTRY		5'h10
 
 `define LM32_TLB_STATE_CHECK		 2'b01
 `define LM32_TLB_STATE_FLUSH		 2'b10
@@ -109,6 +110,7 @@ module lm32_dcache (
     csr_write_enable,
     exception_x,
     eret_q_x,
+    exception_m,
     // ----- Outputs -----
     stall_request,
     restart_request,
@@ -117,7 +119,7 @@ module lm32_dcache (
     refilling,
     load_data,
    // To pipeline
-    dtlb_miss_q,
+    dtlb_miss_int,
     kernel_mode,
     pa,
     csr_read_data
@@ -204,6 +206,7 @@ input [`LM32_CSR_RNG] csr;				// CSR read/write index
 input [`LM32_WORD_RNG] csr_write_data;			// Data to write to specified CSR
 input csr_write_enable;					// CSR write enable
 input exception_x;					// An exception occured in the X stage
+input exception_m;
 input eret_q_x;
 
 /////////////////////////////////////////////////////
@@ -229,9 +232,7 @@ wire   [`LM32_WORD_RNG] load_data;
 output kernel_mode;
 wire kernel_mode;
 
-output dtlb_miss_q;
-//output dtlb_miss;
-//output dtlb_miss_int;
+output dtlb_miss_int;
 
 /////////////////////////////////////////////////////
 // Internal nets and registers 
@@ -292,8 +293,8 @@ reg [addr_dtlb_index_width-1:0] dtlb_update_set;
 reg dtlb_flushing;
 reg [addr_dtlb_index_width-1:0] dtlb_flush_set;
 wire dtlb_miss;
-reg dtlb_miss_q = 0;
-reg dtlb_miss_int = 0;
+reg dtlb_miss_q = `FALSE;
+wire dtlb_miss_int;
 reg [`LM32_WORD_RNG] dtlb_miss_addr;
 wire dtlb_data_valid;
 wire [`LM32_DTLB_LOOKUP_RANGE] dtlb_lookup;
@@ -695,35 +696,24 @@ begin
 	end
 end
 
-assign csr_read_data = latest_store_tlb_lookup;
+assign csr_read_data = dtlb_miss_addr;
 
 assign dtlb_miss = (kernel_mode_reg == `LM32_USER_MODE) && (load_q_m || store_q_m) && ~(dtlb_data_valid);
 
 always @(posedge clk_i `CFG_RESET_SENSITIVITY)
 begin
 	if (rst_i == `TRUE)
-		dtlb_miss_int <= 0;
+		dtlb_miss_q <= `FALSE;
 	else
 	begin
-		if (dtlb_miss)
-			dtlb_miss_int <= 1;
-		else
-			dtlb_miss_int <= 0;
+		if (dtlb_miss && ~dtlb_miss_q)
+			dtlb_miss_q <= `TRUE;
+		else if (dtlb_miss_q && exception_m)
+			dtlb_miss_q <= `FALSE;
 	end
 end
 
-always @(posedge clk_i `CFG_RESET_SENSITIVITY)
-begin
-	if (rst_i == `TRUE)
-		dtlb_miss_q <= 0;
-	else
-	begin
-		if (dtlb_miss_int)
-			dtlb_miss_q <= 1;
-		else
-			dtlb_miss_q <= 0;
-	end
-end
+assign dtlb_miss_int = (dtlb_miss || dtlb_miss_q);
 
 always @(posedge clk_i `CFG_RESET_SENSITIVITY)
 begin
@@ -746,14 +736,14 @@ begin
 			if (dtlb_miss == `TRUE)
 			begin
 				dtlb_miss_addr <= address_m;
-				$display("ERROR : DTLB MISS on addr 0x%08X at time %t", address_m, $time);
+				$display("WARNING : DTLB MISS on addr 0x%08X at time %t", address_m, $time);
 			end
 			if (csr_write_enable && csr_write_data[0])
 			begin
 				// FIXME : test for kernel mode is removed for testing purposes ONLY
 				if (csr == `LM32_CSR_TLB_CTRL /*&& (kernel_mode_reg == `LM32_KERNEL_MODE)*/)
 				begin
-					case (csr_write_data[4:1])
+					case (csr_write_data[5:1])
 					`LM32_DTLB_CTRL_FLUSH:
 					begin
 						dtlb_flushing <= 1;
@@ -766,6 +756,15 @@ begin
 					begin
 						dtlb_updating <= 1;
 					end
+
+					`LM32_TLB_CTRL_INVALIDATE_ENTRY:
+					begin
+						dtlb_flushing <= 1;
+						dtlb_flush_set <= dtlb_update_vaddr_csr_reg[`LM32_DTLB_IDX_RNG];
+						dtlb_updating <= 0;
+						dtlb_state <= `LM32_TLB_STATE_CHECK;
+					end
+
 					endcase
 				end
 			end
@@ -783,8 +782,8 @@ begin
 	end
 end
 
-assign switch_to_kernel_mode = (csr_write_enable && (csr == `LM32_CSR_TLB_CTRL) && csr_write_data[4:0] == {`LM32_TLB_CTRL_SWITCH_TO_KERNEL_MODE, 1'b1});
-assign switch_to_user_mode = (csr_write_enable && (csr == `LM32_CSR_TLB_CTRL) && csr_write_data[4:0] == {`LM32_TLB_CTRL_SWITCH_TO_USER_MODE, 1'b1});
+assign switch_to_kernel_mode = (/*(kernel_mode_reg == `LM32_KERNEL_MODE) && */csr_write_enable && (csr == `LM32_CSR_TLB_CTRL) && csr_write_data[5:0] == {`LM32_TLB_CTRL_SWITCH_TO_KERNEL_MODE, 1'b1});
+assign switch_to_user_mode = (/*(kernel_mode_reg == `LM32_KERNEL_MODE) && */csr_write_enable && (csr == `LM32_CSR_TLB_CTRL) && csr_write_data[5:0] == {`LM32_TLB_CTRL_SWITCH_TO_USER_MODE, 1'b1});
 
 
 always @(posedge clk_i `CFG_RESET_SENSITIVITY)
