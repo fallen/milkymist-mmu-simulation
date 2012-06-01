@@ -9,7 +9,7 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="149" />
+   <WVObjectSize size="144" />
    <wvobject fp_name="/soc/memadr" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">memadr[31:0]</obj_property>
       <obj_property name="ObjectShortName">memadr[31:0]</obj_property>
@@ -413,13 +413,8 @@
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_read_data" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">dtlb_read_data[19:0]</obj_property>
-      <obj_property name="ObjectShortName">dtlb_read_data[19:0]</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
-   </wvobject>
-   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_read_tag" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">dtlb_read_tag[9:0]</obj_property>
-      <obj_property name="ObjectShortName">dtlb_read_tag[9:0]</obj_property>
+      <obj_property name="ElementShortName">dtlb_read_data[30:0]</obj_property>
+      <obj_property name="ObjectShortName">dtlb_read_data[30:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_sets" type="array" db_ref_id="1">
@@ -431,37 +426,18 @@
       <obj_property name="ElementShortName">dtlb_state[1:0]</obj_property>
       <obj_property name="ObjectShortName">dtlb_state[1:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_tag_read_address" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">dtlb_tag_read_address[9:0]</obj_property>
-      <obj_property name="ObjectShortName">dtlb_tag_read_address[9:0]</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
-   </wvobject>
-   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_tag_read_port_enable" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">dtlb_tag_read_port_enable</obj_property>
-      <obj_property name="ObjectShortName">dtlb_tag_read_port_enable</obj_property>
-   </wvobject>
-   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_tag_write_address" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">dtlb_tag_write_address[9:0]</obj_property>
-      <obj_property name="ObjectShortName">dtlb_tag_write_address[9:0]</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
-   </wvobject>
    <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_updating" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">dtlb_updating</obj_property>
       <obj_property name="ObjectShortName">dtlb_updating</obj_property>
    </wvobject>
    <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_write_data" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">dtlb_write_data[19:0]</obj_property>
-      <obj_property name="ObjectShortName">dtlb_write_data[19:0]</obj_property>
+      <obj_property name="ElementShortName">dtlb_write_data[30:0]</obj_property>
+      <obj_property name="ObjectShortName">dtlb_write_data[30:0]</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_write_port_enable" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">dtlb_write_port_enable</obj_property>
       <obj_property name="ObjectShortName">dtlb_write_port_enable</obj_property>
-   </wvobject>
-   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_write_tag" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">dtlb_write_tag[9:0]</obj_property>
-      <obj_property name="ObjectShortName">dtlb_write_tag[9:0]</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/flush_set" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">flush_set[7:0]</obj_property>
