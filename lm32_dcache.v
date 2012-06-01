@@ -137,7 +137,6 @@ parameter dtlb_sets = 1024;				// Number of lines of DTLB
 parameter page_size = 4096;				// System page size
 
 `define LM32_DTLB_IDX_RNG		addr_dtlb_index_msb:addr_dtlb_index_lsb
-//`define LM32_DTLB_INVALID_TAG		{ {9{1'b1}}, `FALSE}
 `define LM32_DTLB_ADDRESS_PFN_RNG	addr_pfn_msb:addr_pfn_lsb
 `define LM32_PAGE_OFFSET_RNG		addr_page_offset_msb:addr_page_offset_lsb
 `define LM32_DTLB_INVALID_ADDRESS	{ vpfn_width{1'b1} }
@@ -464,8 +463,6 @@ end
 generate
     for (i = 0; i < associativity; i = i + 1)
     begin : match
-// FIXME : We need to put physical address coming out from MMU instead of address_m[]
-//assign way_match[i] = ({way_tag[i], way_valid[i]} == {address_m[`LM32_DC_ADDR_TAG_RNG], `TRUE});
 
 assign dtlb_read_tag = dtlb_read_data[`LM32_DTLB_TAG_RANGE];
 assign dtlb_data_valid = dtlb_read_data[`LM32_DTLB_VALID_BIT];
@@ -473,18 +470,7 @@ assign dtlb_lookup = dtlb_read_data[`LM32_DTLB_LOOKUP_RANGE];
 
 assign way_match[i] = (kernel_mode_reg == `LM32_KERNEL_MODE) ?
 		      ({way_tag[i], way_valid[i]} == {address_m[`LM32_DC_ADDR_TAG_RNG], `TRUE})
-		      : /*dtlb_data_valid && (dtlb_read_tag == address_m[`LM32_DC_ADDR_TAG_RNG]) && 
-		     */ ({way_tag[i], way_valid[i]} == {dtlb_lookup, `TRUE});
-
-/*always @(*)
-begin
-	if (kernel_mode_reg == `LM32_KERNEL_MODE)
-		way_match[i] <= ({way_tag[i], way_valid[i]} == {address_m[`LM32_DC_ADDR_TAG_RNG], `TRUE});
-	else if (dtlb_read_tag == `LM32_DTLB_TAG_INVALID) // DTLB tag is invalid
-		way_match[i] <= `FALSE;
-	else
-		way_match[i] <= ({way_tag[i], way_valid[i]} == {dtlb_read_data, `TRUE});
-end*/
+		      : ({way_tag[i], way_valid[i]} == {dtlb_lookup, `TRUE});
     end
 endgenerate
 
@@ -554,20 +540,10 @@ assign dtlb_data_read_address = address_x[`LM32_DTLB_IDX_RNG];
 assign dtlb_tag_read_address = address_x[`LM32_DTLB_IDX_RNG];
 
 // tlb_update_address will receive data from a CSR register
-assign dtlb_data_write_address = /*(dtlb_flushing == `TRUE) 
-				 ? dtlb_flush_set
-				 : */dtlb_update_vaddr_csr_reg[`LM32_DTLB_IDX_RNG];
-
-assign dtlb_tag_write_address = (dtlb_flushing == `TRUE)
-				? dtlb_flush_set
-				: dtlb_update_vaddr_csr_reg[`LM32_DTLB_IDX_RNG];
+assign dtlb_data_write_address = dtlb_update_vaddr_csr_reg[`LM32_DTLB_IDX_RNG];
 
 assign dtlb_data_read_port_enable = (stall_x == `FALSE) || !stall_m;
-assign dtlb_tag_read_port_enable = (stall_x == `FALSE) || !stall_m;
 assign dtlb_write_port_enable = dtlb_updating || dtlb_flushing;
-assign dtlb_write_tag = (dtlb_flushing == `TRUE)
-			? `LM32_DTLB_TAG_INVALID
-			: {dtlb_update_vaddr_csr_reg[30:22], `TRUE}; // 10-1 top VA bits
 
 assign physical_address = (kernel_mode_reg == `LM32_KERNEL_MODE)
 			    ? address_m
@@ -613,7 +589,7 @@ assign tmem_write_data[`LM32_DC_TAGS_VALID_RNG] = ((last_refill == `TRUE) || (va
 assign tmem_write_data[`LM32_DC_TAGS_TAG_RNG] = refill_address[`LM32_DC_ADDR_TAG_RNG];
 
 // Signals that indicate which state we are in
-assign flushing = state[0]; //|| dtlb_miss;
+assign flushing = state[0];
 assign check = state[1];
 assign refill = state[2];
 
@@ -686,8 +662,6 @@ begin
             end
             else if (dflush == `TRUE)
                 state <= `LM32_DC_STATE_FLUSH;
-//           else if (dtlb_miss == `TRUE)
-//		refill_address <= physical_address;
         end
 
         // Refill a cache line
@@ -771,8 +745,6 @@ begin
 			dtlb_flushing <= 0;
 			if (dtlb_miss == `TRUE)
 			begin
-//				dtlb_flushing <= 0;
-//				dtlb_flush_set <= address_m[addr_dtlb_index_width-1:0];
 				dtlb_miss_addr <= address_m;
 				$display("ERROR : DTLB MISS on addr 0x%08X at time %t", address_m, $time);
 			end
