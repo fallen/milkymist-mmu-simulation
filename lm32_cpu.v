@@ -616,7 +616,8 @@ wire mc_stall_request_x;                        // Multi-cycle arithmetic unit s
 wire [`LM32_WORD_RNG] mc_result_x;
 `endif
 
-wire [`LM32_WORD_RNG] load_store_csr_read_data_x;// Data read from load store CSRs
+wire [`LM32_WORD_RNG] load_store_csr_read_data_x;// Data read from load store unit CSRs
+wire [`LM32_WORD_RNG] instruction_csr_read_data_x;// Data read from instruction unit CSRs
 // From CSRs
 `ifdef CFG_INTERRUPTS_ENABLED
 wire [`LM32_WORD_RNG] interrupt_csr_read_data_x;// Data read from interrupt CSRs
@@ -819,6 +820,7 @@ lm32_instruction_unit #(
     .branch_target_x        (branch_target_x),
 `endif
     .exception_m            (exception_m),
+    .exception_x            (exception_x),
     .branch_taken_m         (branch_taken_m),
     .branch_mispredict_taken_m (branch_mispredict_taken_m),
     .branch_target_m        (branch_target_m),
@@ -834,7 +836,11 @@ lm32_instruction_unit #(
     .dcache_restart_request (dcache_restart_request),
     .dcache_refill_request  (dcache_refill_request),
     .dcache_refilling       (dcache_refilling),
-`endif        
+`endif
+    .csr		    (csr_x),
+    .csr_write_data	    (operand_1_x),
+    .csr_write_enable	    (csr_write_enable_q_x),
+    .eret_q_x		    (eret_q_x),
 `ifdef CFG_IWB_ENABLED
     // From Wishbone
     .i_dat_i                (I_DAT_I),
@@ -863,6 +869,8 @@ lm32_instruction_unit #(
 `ifdef CFG_IROM_ENABLED
     .irom_data_m            (irom_data_m),
 `endif
+    .itlb_miss		    (itlb_miss_exception),
+    .csr_read_data	    (instruction_csr_read_data_x),
 `ifdef CFG_IWB_ENABLED
     // To Wishbone
     .i_dat_o                (I_DAT_O),

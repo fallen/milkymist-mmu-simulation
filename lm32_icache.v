@@ -57,6 +57,8 @@
 `include "lm32_include.v"
 
 `ifdef CFG_ICACHE_ENABLED
+`define LM32_KERNEL_MODE		 1
+`define LM32_USER_MODE			 0
 
 `define LM32_IC_ADDR_OFFSET_RNG          addr_offset_msb:addr_offset_lsb
 `define LM32_IC_ADDR_SET_RNG             addr_set_msb:addr_set_lsb
@@ -79,6 +81,15 @@
 `define LM32_IC_STATE_CHECK              4'b0100
 `define LM32_IC_STATE_REFILL             4'b1000
 
+`define LM32_ITLB_CTRL_FLUSH		 	5'h1
+`define LM32_ITLB_CTRL_UPDATE		 	5'h2
+`define LM32_TLB_CTRL_SWITCH_TO_KERNEL_MODE	5'h4
+`define LM32_TLB_CTRL_SWITCH_TO_USER_MODE	5'h8
+`define LM32_TLB_CTRL_INVALIDATE_ENTRY		5'h10
+
+`define LM32_TLB_STATE_CHECK		 2'b01
+`define LM32_TLB_STATE_FLUSH		 2'b10
+
 /////////////////////////////////////////////////////
 // Module interface
 /////////////////////////////////////////////////////
@@ -100,13 +111,24 @@ module lm32_icache (
 `endif
     valid_d,
     branch_predict_taken_d,
+    csr,
+    csr_write_data,
+    csr_write_enable,
+    exception_x,
+    eret_q_x,
+    exception_m,
     // ----- Outputs -----
     stall_request,
     restart_request,
     refill_request,
     refill_address,
+    physical_refill_address,
     refilling,
-    inst
+    inst,
+    itlb_miss_int,
+    kernel_mode,
+    pa,
+    csr_read_data
     );
 
 /////////////////////////////////////////////////////
@@ -118,6 +140,39 @@ parameter sets = 512;                                   // Number of sets
 parameter bytes_per_line = 16;                          // Number of bytes per cache line
 parameter base_address = 0;                             // Base address of cachable memory
 parameter limit = 0;                                    // Limit (highest address) of cachable memory
+
+parameter itlb_sets = 1024;				// Number of lines of ITLB
+parameter page_size = 4096;				// System page size
+
+`define LM32_ITLB_IDX_RNG		addr_itlb_index_msb:addr_itlb_index_lsb
+`define LM32_ITLB_ADDRESS_PFN_RNG	addr_pfn_msb:addr_pfn_lsb
+`define LM32_PAGE_OFFSET_RNG		addr_page_offset_msb:addr_page_offset_lsb
+`define LM32_ITLB_INVALID_ADDRESS	{ vpfn_width{1'b1} }
+
+localparam addr_page_offset_lsb = 0;
+localparam addr_page_offset_msb = addr_page_offset_lsb + clogb2(page_size) - 2;
+localparam addr_itlb_index_width = clogb2(itlb_sets) - 1;
+localparam addr_itlb_index_lsb = addr_page_offset_msb + 1;
+localparam addr_itlb_index_msb = addr_itlb_index_lsb + addr_itlb_index_width - 1;
+localparam addr_pfn_lsb = addr_page_offset_msb + 1;
+localparam addr_pfn_msb = `LM32_WORD_WIDTH - 1;
+localparam vpfn_width = `LM32_WORD_WIDTH - (clogb2(page_size) - 1);
+localparam addr_itlb_tag_width = vpfn_width - addr_itlb_index_width;
+localparam addr_itlb_tag_lsb = addr_itlb_index_msb + 1;
+localparam addr_itlb_tag_msb = addr_itlb_tag_lsb + addr_itlb_tag_width - 1;
+
+`define LM32_ITLB_TAG_INVALID		{ addr_itlb_tag_width{ 1'b0 } }
+`define LM32_ITLB_LOOKUP_RANGE		vpfn_width-1:0
+
+/* The following define is the range containing the TAG inside the itlb_read_data wire which contains the ITLB value from BlockRAM
+ * Indeed itlb_read_data contains { VALID_BIT, TAG_VALUE, LOOKUP_VALUE }
+ * LM32_ITLB_TAG_RANGE is the range to extract the TAG_VALUE */
+`define LM32_ITLB_TAG_RANGE		vpfn_width+addr_itlb_tag_width-1:vpfn_width
+
+/* The following define is the range containing the TAG inside a memory address like itlb_update_vaddr_csr_reg for instance. */
+`define LM32_ITLB_ADDR_TAG_RNG		addr_itlb_tag_msb:addr_itlb_tag_lsb
+`define LM32_ITLB_VALID_BIT		vpfn_width+addr_itlb_tag_width
+
 
 localparam addr_offset_width = clogb2(bytes_per_line)-1-2;
 localparam addr_set_width = clogb2(sets)-1;
@@ -154,9 +209,19 @@ input iflush;                                       // Flush the cache
 input select_f;                                     // Instruction in F stage is mapped through instruction cache
 `endif
    
+input [`LM32_CSR_RNG] csr;				// CSR read/write index
+input [`LM32_WORD_RNG] csr_write_data;			// Data to write to specified CSR
+input csr_write_enable;					// CSR write enable
+input exception_x;					// An exception occured in the X stage
+input exception_m;
+input eret_q_x;
+
 /////////////////////////////////////////////////////
 // Outputs
 /////////////////////////////////////////////////////
+
+output csr_read_data;
+wire [`LM32_WORD_RNG] csr_read_data;
 
 output stall_request;                               // Request to stall the pipeline
 wire   stall_request;
@@ -166,10 +231,17 @@ output refill_request;                              // Request to refill a cache
 wire   refill_request;
 output [`LM32_PC_RNG] refill_address;               // Base address of cache refill
 reg    [`LM32_PC_RNG] refill_address;               
+output [`LM32_PC_RNG] physical_refill_address;
+reg    [`LM32_PC_RNG] physical_refill_address;
 output refilling;                                   // Indicates the instruction cache is currently refilling
 reg    refilling;
 output [`LM32_INSTRUCTION_RNG] inst;                // Instruction read from cache
 wire   [`LM32_INSTRUCTION_RNG] inst;
+
+output kernel_mode;
+wire kernel_mode;
+
+output itlb_miss_int;
 
 /////////////////////////////////////////////////////
 // Internal nets and registers 
@@ -199,7 +271,41 @@ reg [`LM32_IC_ADDR_OFFSET_RNG] refill_offset;
 wire last_refill;
 reg [`LM32_IC_TMEM_ADDR_RNG] flush_set;
 
-genvar i;
+wire [addr_itlb_index_width-1:0] itlb_data_read_address;
+wire [addr_itlb_index_width-1:0] itlb_data_write_address;
+wire itlb_data_read_port_enable;
+wire itlb_write_port_enable;
+wire [vpfn_width + addr_itlb_tag_width + 1 - 1:0] itlb_write_data; // +1 is for valid_bit
+wire [vpfn_width + addr_itlb_tag_width + 1 - 1:0] itlb_read_data; // +1 is for valid_bit
+
+wire [`LM32_WORD_RNG] physical_address;
+
+wire [`LM32_WORD_RNG] pa;
+output [`LM32_WORD_RNG] pa;
+
+assign pa = physical_address;
+
+reg kernel_mode_reg = `LM32_KERNEL_MODE;
+wire switch_to_kernel_mode;
+wire switch_to_user_mode;
+reg [`LM32_WORD_RNG] itlb_update_vaddr_csr_reg = `LM32_WORD_WIDTH'd0;
+reg [`LM32_WORD_RNG] itlb_update_paddr_csr_reg = `LM32_WORD_WIDTH'd0;
+reg [1:0] itlb_state = `LM32_TLB_STATE_CHECK;
+reg [`LM32_WORD_RNG] itlb_ctrl_csr_reg = `LM32_WORD_WIDTH'd0;
+reg itlb_updating;
+reg [addr_itlb_index_width-1:0] itlb_update_set;
+reg itlb_flushing;
+reg [addr_itlb_index_width-1:0] itlb_flush_set;
+wire itlb_miss;
+reg itlb_miss_q = `FALSE;
+wire itlb_miss_int;
+reg [`LM32_WORD_RNG] itlb_miss_addr;
+wire itlb_data_valid;
+wire [`LM32_ITLB_LOOKUP_RANGE] itlb_lookup;
+
+genvar i, j;
+
+assign kernel_mode = kernel_mode_reg;
 
 /////////////////////////////////////////////////////
 // Functions
@@ -210,6 +316,39 @@ genvar i;
 /////////////////////////////////////////////////////
 // Instantiations
 /////////////////////////////////////////////////////
+
+// ITLB instantiation
+lm32_ram
+  #(
+    // ----- Parameters -------
+    .data_width (vpfn_width + addr_itlb_tag_width + 1),
+    .address_width (addr_itlb_index_width)
+// Modified for Milkymist: removed non-portable RAM parameters
+    ) itlb_data_ram
+    (
+     // ----- Inputs -------
+     .read_clk (clk_i),
+     .write_clk (clk_i),
+     .reset (rst_i),
+     .read_address (itlb_data_read_address),
+     .enable_read (itlb_data_read_port_enable),
+     .write_address (itlb_data_write_address),
+     .enable_write (`TRUE),
+     .write_enable (itlb_write_port_enable),
+     .write_data (itlb_write_data),
+     // ----- Outputs -------
+     .read_data (itlb_read_data)
+     );
+
+`ifdef CFG_VERBOSE_DISPLAY_ENABLED
+always @(posedge clk_i)
+begin
+	if (itlb_write_port_enable)
+	begin
+		$display("[ITLB data : %d] Writing 0x%08X to 0x%08X", $time, itlb_write_data, itlb_data_write_address);
+	end
+end
+`endif
 
    generate
       for (i = 0; i < associativity; i = i + 1)
@@ -268,11 +407,45 @@ endgenerate
 // Combinational logic
 /////////////////////////////////////////////////////
 
+// CSR Write
+always @(posedge clk_i `CFG_RESET_SENSITIVITY)
+begin
+	if (rst_i == `TRUE)
+	begin
+		itlb_ctrl_csr_reg <= `LM32_WORD_WIDTH'd0;
+		itlb_update_vaddr_csr_reg <= `LM32_WORD_WIDTH'd0;
+		itlb_update_paddr_csr_reg <= `LM32_WORD_WIDTH'd0;
+	end
+	else
+	begin
+		if (csr_write_enable)
+		begin
+			case (csr)
+			`LM32_CSR_TLB_CTRL:	if (~csr_write_data[0]) itlb_ctrl_csr_reg[31:1] <= csr_write_data[31:1];
+			`LM32_CSR_TLB_VADDRESS: if (~csr_write_data[0]) itlb_update_vaddr_csr_reg[31:1] <= csr_write_data[31:1];
+			`LM32_CSR_TLB_PADDRESS: if (~csr_write_data[0]) itlb_update_paddr_csr_reg[31:1] <= csr_write_data[31:1];
+			endcase
+		end
+		itlb_ctrl_csr_reg[0] <= 0;
+		itlb_update_vaddr_csr_reg[0] <= 0;
+		itlb_update_paddr_csr_reg[0] <= 0;
+	end
+end
+
 // Compute which ways in the cache match the address address being read
 generate
     for (i = 0; i < associativity; i = i + 1)
     begin : match
-assign way_match[i] = ({way_tag[i], way_valid[i]} == {address_f[`LM32_IC_ADDR_TAG_RNG], `TRUE});
+
+assign itlb_read_tag = itlb_read_data[`LM32_ITLB_TAG_RANGE];
+assign itlb_data_valid = itlb_read_data[`LM32_ITLB_VALID_BIT];
+assign itlb_lookup = itlb_read_data[`LM32_ITLB_LOOKUP_RANGE];
+
+//assign way_match[i] = ({way_tag[i], way_valid[i]} == {address_f[`LM32_IC_ADDR_TAG_RNG], `TRUE});
+assign way_match[i] = (kernel_mode_reg == `LM32_KERNEL_MODE) ?
+		      ({way_tag[i], way_valid[i]} == {address_f[`LM32_IC_ADDR_TAG_RNG], `TRUE}) : 
+
+		      ({way_tag[i], way_valid[i]} == {itlb_lookup, `TRUE });
     end
 endgenerate
 
@@ -304,6 +477,25 @@ assign tmem_write_address = flushing
                                 ? flush_set
                                 : refill_address[`LM32_IC_ADDR_SET_RNG];
 
+// Compute address to use to index into the ITLB data memory
+
+assign itlb_data_read_address = address_a[`LM32_ITLB_IDX_RNG];
+
+// tlb_update_address will receive data from a CSR register
+assign itlb_data_write_address = itlb_update_vaddr_csr_reg[`LM32_ITLB_IDX_RNG];
+
+assign itlb_data_read_port_enable = (stall_a == `FALSE) || !stall_f;
+assign itlb_write_port_enable = itlb_updating || itlb_flushing;
+
+assign physical_address = (kernel_mode_reg == `LM32_KERNEL_MODE)
+			    ? {address_f, 2'b0}
+			    : {itlb_lookup, address_f[`LM32_PAGE_OFFSET_RNG+2], 2'b0};
+
+assign itlb_write_data = (itlb_flushing == `TRUE)
+			 ? {`FALSE, {addr_itlb_tag_width{1'b0}}, {vpfn_width{1'b0}}}
+			 : {`TRUE, {itlb_update_vaddr_csr_reg[`LM32_ITLB_ADDR_TAG_RNG]}, itlb_update_paddr_csr_reg[`LM32_ITLB_ADDRESS_PFN_RNG]};
+
+
 // Compute signal to indicate when we are on the last refill accesses
 generate 
     if (bytes_per_line > 4)                            
@@ -330,7 +522,7 @@ endgenerate
 
 // On the last refill cycle set the valid bit, for all other writes it should be cleared
 assign tmem_write_data[`LM32_IC_TAGS_VALID_RNG] = last_refill & !flushing;
-assign tmem_write_data[`LM32_IC_TAGS_TAG_RNG] = refill_address[`LM32_IC_ADDR_TAG_RNG];
+assign tmem_write_data[`LM32_IC_TAGS_TAG_RNG] = physical_refill_address[`LM32_IC_ADDR_TAG_RNG];
 
 // Signals that indicate which state we are in
 assign flushing = |state[1:0];
@@ -414,11 +606,13 @@ begin
                 restart_request <= `FALSE;
             if (iflush == `TRUE)
             begin
+                physical_refill_address <= physical_address[`LM32_PC_RNG];
                 refill_address <= address_f;
                 state <= `LM32_IC_STATE_FLUSH;
             end
             else if (miss == `TRUE)
             begin
+                physical_refill_address <= physical_address[`LM32_PC_RNG];
                 refill_address <= address_f;
                 state <= `LM32_IC_STATE_REFILL;
             end
@@ -439,6 +633,139 @@ begin
 
         endcase        
     end
+end
+
+assign csr_read_data = itlb_miss_addr;
+
+assign itlb_miss = (kernel_mode_reg == `LM32_USER_MODE) && (read_enable_f) && ~(itlb_data_valid);
+
+always @(posedge clk_i `CFG_RESET_SENSITIVITY)
+begin
+	if (rst_i == `TRUE)
+		itlb_miss_q <= `FALSE;
+	else
+	begin
+		if (itlb_miss && ~itlb_miss_q)
+			itlb_miss_q <= `TRUE;
+		else if (itlb_miss_q && exception_m)
+			itlb_miss_q <= `FALSE;
+	end
+end
+
+assign itlb_miss_int = (itlb_miss || itlb_miss_q);
+
+always @(posedge clk_i `CFG_RESET_SENSITIVITY)
+begin
+	if (rst_i == `TRUE)
+	begin
+		itlb_flushing <= 1;
+		itlb_flush_set <= {addr_itlb_index_width{1'b1}};
+		itlb_state <= `LM32_TLB_STATE_FLUSH;
+		itlb_updating <= 0;
+		itlb_miss_addr <= `LM32_WORD_WIDTH'd0;
+	end
+	else
+	begin
+		case (itlb_state)
+
+		`LM32_TLB_STATE_CHECK:
+		begin
+			itlb_updating <= 0;
+			itlb_flushing <= 0;
+			if (itlb_miss == `TRUE)
+			begin
+				itlb_miss_addr <= address_f;
+				$display("WARNING : ITLB MISS on addr 0x%08X at time %t", address_f, $time);
+			end
+			if (csr_write_enable && ~csr_write_data[0])
+			begin
+				// FIXME : test for kernel mode is removed for testing purposes ONLY
+				if (csr == `LM32_CSR_TLB_CTRL /*&& (kernel_mode_reg == `LM32_KERNEL_MODE)*/)
+				begin
+`ifdef CFG_VERBOSE_DISPLAY_ENABLED
+					$display("ITLB WCSR at %t with csr_write_data == 0x%08X", $time, csr_write_data);
+`endif
+					case (csr_write_data[5:1])
+					`LM32_ITLB_CTRL_FLUSH:
+					begin
+`ifdef CFG_VERBOSE_DISPLAY_ENABLED
+						$display("it's a FLUSH at %t", $time);
+`endif
+						itlb_flushing <= 1;
+						itlb_flush_set <= {addr_itlb_index_width{1'b1}};
+						itlb_state <= `LM32_TLB_STATE_FLUSH;
+						itlb_updating <= 0;
+					end
+
+					`LM32_ITLB_CTRL_UPDATE:
+					begin
+`ifdef CFG_VERBOSE_DISPLAY_ENABLED
+						$display("it's an UPDATE at %t", $time);
+`endif
+						itlb_updating <= 1;
+					end
+
+					`LM32_TLB_CTRL_INVALIDATE_ENTRY:
+					begin
+`ifdef CFG_VERBOSE_DISPLAY_ENABLED
+						$display("it's an INVALIDATE ENTRY at %t", $time);
+`endif
+						itlb_flushing <= 1;
+						itlb_flush_set <= itlb_update_vaddr_csr_reg[`LM32_ITLB_IDX_RNG];
+						itlb_updating <= 0;
+						itlb_state <= `LM32_TLB_STATE_CHECK;
+					end
+
+					endcase
+				end
+			end
+		end
+
+		`LM32_TLB_STATE_FLUSH:
+		begin
+			itlb_updating <= 0;
+			if (itlb_flush_set == {addr_itlb_index_width{1'b0}})
+				itlb_state <= `LM32_TLB_STATE_CHECK;
+			itlb_flush_set <= itlb_flush_set - 1'b1;
+		end
+
+		endcase
+	end
+end
+
+assign switch_to_kernel_mode = (/*(kernel_mode_reg == `LM32_KERNEL_MODE) && */csr_write_enable && (csr == `LM32_CSR_TLB_CTRL) && csr_write_data[5:0] == {`LM32_TLB_CTRL_SWITCH_TO_KERNEL_MODE, 1'b0});
+assign switch_to_user_mode = (/*(kernel_mode_reg == `LM32_KERNEL_MODE) && */csr_write_enable && (csr == `LM32_CSR_TLB_CTRL) && csr_write_data[5:0] == {`LM32_TLB_CTRL_SWITCH_TO_USER_MODE, 1'b0});
+
+reg go_to_user_mode;
+reg go_to_user_mode_2;
+
+always @(posedge clk_i `CFG_RESET_SENSITIVITY)
+begin
+	if (rst_i == `TRUE)
+		go_to_user_mode <= `FALSE;
+	else
+		go_to_user_mode <= (eret_q_x || switch_to_user_mode);
+end
+
+always @(posedge clk_i `CFG_RESET_SENSITIVITY)
+begin
+	if (rst_i == `TRUE)
+		go_to_user_mode_2 <= `FALSE;
+	else
+		go_to_user_mode_2 <= go_to_user_mode;
+end
+
+always @(posedge clk_i `CFG_RESET_SENSITIVITY)
+begin
+	if (rst_i == `TRUE)
+		kernel_mode_reg <= `LM32_KERNEL_MODE;
+	else
+	begin
+		if (exception_x || switch_to_kernel_mode)
+			kernel_mode_reg <= `LM32_KERNEL_MODE;
+		else if (go_to_user_mode_2)
+			kernel_mode_reg <= `LM32_USER_MODE;
+	end
 end
 
 generate 
