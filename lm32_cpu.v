@@ -780,6 +780,7 @@ reg ext_break_r;
 
 `ifdef CFG_MMU_ENABLED
 wire dtlb_miss_exception;
+wire itlb_miss_exception;
 `endif
 
 /////////////////////////////////////////////////////
@@ -1791,7 +1792,7 @@ assign non_debug_exception_x = (system_call_exception == `TRUE)
                                )
 `endif
 `ifdef CFG_MMU_ENABLED
-			|| (dtlb_miss_exception == `TRUE)
+			|| (dtlb_miss_exception == `TRUE || itlb_miss_exception == `TRUE)
 `endif
                             ;
 
@@ -1817,7 +1818,7 @@ assign exception_x =           (system_call_exception == `TRUE)
                                )
 `endif
 `ifdef CFG_MMU_ENABLED
-			|| (dtlb_miss_exception == `TRUE)
+			|| (dtlb_miss_exception == `TRUE || itlb_miss_exception == `TRUE)
 `endif
                             ;
 `endif
@@ -1868,8 +1869,10 @@ begin
     else
 `endif
 `ifdef CFG_MMU_ENABLED
-	if (dtlb_miss_exception == `TRUE )
+	if (dtlb_miss_exception == `TRUE)
 		eid_x = `LM32_EID_DTLB_MISS;
+	else if (itlb_miss_exception == `TRUE)
+		eid_x = `LM32_EID_ITLB_MISS;
 	else
 `endif
 		eid_x = `LM32_EID_SCALL;
@@ -2166,7 +2169,7 @@ begin
 `endif
     `LM32_CSR_CFG2: csr_read_data_x = cfg2;
     `LM32_CSR_TLB_VADDRESS: csr_read_data_x = load_store_csr_read_data_x;
-      
+    `LM32_CSR_TLB_PADDRESS: csr_read_data_x = instruction_csr_read_data_x;
     default:        csr_read_data_x = {`LM32_WORD_WIDTH{1'bx}};
     endcase
 end

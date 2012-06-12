@@ -316,7 +316,7 @@ reg itlb_flushing;
 reg [addr_itlb_index_width-1:0] itlb_flush_set;
 wire itlb_miss;
 reg itlb_miss_q = `FALSE;
-reg [`LM32_WORD_RNG] itlb_miss_addr;
+reg [`LM32_PC_RNG] itlb_miss_addr;
 wire itlb_data_valid;
 wire [`LM32_ITLB_LOOKUP_RANGE] itlb_lookup;
 reg go_to_user_mode;
@@ -673,7 +673,7 @@ assign kernel_mode = kernel_mode_reg;
 assign switch_to_kernel_mode = (/*(kernel_mode_reg == `LM32_KERNEL_MODE) && */csr_write_enable && (csr == `LM32_CSR_TLB_CTRL) && csr_write_data[5:0] == {`LM32_TLB_CTRL_SWITCH_TO_KERNEL_MODE, 1'b0});
 assign switch_to_user_mode = (/*(kernel_mode_reg == `LM32_KERNEL_MODE) && */csr_write_enable && (csr == `LM32_CSR_TLB_CTRL) && csr_write_data[5:0] == {`LM32_TLB_CTRL_SWITCH_TO_USER_MODE, 1'b0});
 
-assign csr_read_data = itlb_miss_addr;
+assign csr_read_data = {itlb_miss_addr, 2'b0};
 assign itlb_miss = (kernel_mode_reg == `LM32_USER_MODE) && (read_enable_f) && ~(itlb_data_valid);
 assign itlb_miss_int = (itlb_miss || itlb_miss_q);
 assign itlb_read_tag = itlb_read_data[`LM32_ITLB_TAG_RANGE];
@@ -765,7 +765,7 @@ begin
 		itlb_flush_set <= {addr_itlb_index_width{1'b1}};
 		itlb_state <= `LM32_TLB_STATE_FLUSH;
 		itlb_updating <= 0;
-		itlb_miss_addr <= `LM32_WORD_WIDTH'd0;
+		itlb_miss_addr <= {`LM32_PC_WIDTH{1'b0}};
 	end
 	else
 	begin
@@ -778,7 +778,7 @@ begin
 			if (itlb_miss == `TRUE)
 			begin
 				itlb_miss_addr <= address_f;
-				$display("WARNING : ITLB MISS on addr 0x%08X at time %t", address_f, $time);
+				$display("WARNING : ITLB MISS on addr 0x%08X at time %t", address_f * 4, $time);
 			end
 			if (csr_write_enable && ~csr_write_data[0])
 			begin
