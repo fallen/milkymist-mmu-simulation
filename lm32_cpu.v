@@ -778,6 +778,10 @@ reg data_bus_error_seen;                        // Indicates if a data bus error
 reg ext_break_r;
 `endif
 
+`ifdef CFG_MMU_ENABLED
+wire dtlb_miss_exception;
+`endif
+
 /////////////////////////////////////////////////////
 // Functions
 /////////////////////////////////////////////////////
@@ -820,7 +824,9 @@ lm32_instruction_unit #(
     .branch_target_x        (branch_target_x),
 `endif
     .exception_m            (exception_m),
+`ifdef CFG_MMU_ENABLED
     .exception_x            (exception_x),
+`endif
     .branch_taken_m         (branch_taken_m),
     .branch_mispredict_taken_m (branch_mispredict_taken_m),
     .branch_target_m        (branch_target_m),
@@ -837,10 +843,12 @@ lm32_instruction_unit #(
     .dcache_refill_request  (dcache_refill_request),
     .dcache_refilling       (dcache_refilling),
 `endif
+`ifdef CFG_MMU_ENABLED
     .csr		    (csr_x),
     .csr_write_data	    (operand_1_x),
     .csr_write_enable	    (csr_write_enable_q_x),
     .eret_q_x		    (eret_q_x),
+`endif
 `ifdef CFG_IWB_ENABLED
     // From Wishbone
     .i_dat_i                (I_DAT_I),
@@ -869,8 +877,10 @@ lm32_instruction_unit #(
 `ifdef CFG_IROM_ENABLED
     .irom_data_m            (irom_data_m),
 `endif
+`ifdef CFG_MMU_ENABLED
     .itlb_miss		    (itlb_miss_exception),
     .csr_read_data	    (instruction_csr_read_data_x),
+`endif
 `ifdef CFG_IWB_ENABLED
     // To Wishbone
     .i_dat_o                (I_DAT_O),
@@ -975,8 +985,6 @@ lm32_decoder decoder (
     .csr_write_enable       (csr_write_enable_d)
     ); 
 
-wire dtlb_miss_exception;
-
 // Load/store unit       
 lm32_load_store_unit #(
     .associativity          (dcache_associativity),
@@ -1014,10 +1022,12 @@ lm32_load_store_unit #(
 `ifdef CFG_IROM_ENABLED
     .irom_data_m            (irom_data_m),
 `endif
+`ifdef CFG_MMU_ENABLED
     .csr		    (csr_x),
     .csr_write_data         (operand_1_x),
     .csr_write_enable       (csr_write_enable_q_x),
     .eret_q_x		    (eret_q_x),
+`endif
     // From Wishbone
     .d_dat_i                (D_DAT_I),
     .d_ack_i                (D_ACK_I),
@@ -1039,8 +1049,10 @@ lm32_load_store_unit #(
 `endif
     .load_data_w            (load_data_w),
     .stall_wb_load          (stall_wb_load),
+`ifdef CFG_MMU_ENABLED
     .dtlb_miss		    (dtlb_miss_exception),
     .csr_read_data          (load_store_csr_read_data_x),
+`endif
     // To Wishbone
     .d_dat_o                (D_DAT_O),
     .d_adr_o                (D_ADR_O),
@@ -1855,9 +1867,11 @@ begin
         eid_x = `LM32_EID_INTERRUPT;
     else
 `endif
+`ifdef CFG_MMU_ENABLED
 	if (dtlb_miss_exception == `TRUE )
 		eid_x = `LM32_EID_DTLB_MISS;
 	else
+`endif
 		eid_x = `LM32_EID_SCALL;
 end
 
