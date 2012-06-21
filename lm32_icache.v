@@ -308,7 +308,7 @@ wire switch_to_kernel_mode;
 wire switch_to_user_mode;
 reg [`LM32_WORD_RNG] itlb_update_vaddr_csr_reg = `LM32_WORD_WIDTH'd0;
 reg [`LM32_WORD_RNG] itlb_update_paddr_csr_reg = `LM32_WORD_WIDTH'd0;
-reg [1:0] itlb_state = `LM32_TLB_STATE_CHECK;
+reg [1:0] itlb_state;
 reg [`LM32_WORD_RNG] itlb_ctrl_csr_reg = `LM32_WORD_WIDTH'd0;
 reg itlb_updating;
 reg [addr_itlb_index_width-1:0] itlb_update_set;
@@ -542,9 +542,9 @@ begin
     begin
         state <= `LM32_IC_STATE_FLUSH_INIT;
         flush_set <= {`LM32_IC_TMEM_ADDR_WIDTH{1'b1}};
-        refill_address <= {`LM32_PC_WIDTH{1'bx}};
+        refill_address <= {`LM32_PC_WIDTH{1'b0}};
 `ifdef CFG_MMU_ENABLED
-        physical_refill_address <= {`LM32_PC_WIDTH{1'bx}};
+        physical_refill_address <= {`LM32_PC_WIDTH{1'b0}};
 `endif
         restart_request <= `FALSE;
     end

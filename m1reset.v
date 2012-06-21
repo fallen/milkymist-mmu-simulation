@@ -19,21 +19,22 @@ module m1reset(
 	input sys_clk,
 	input trigger_reset,
 	
-	output reg sys_rst,
+	output sys_rst,
 	output ac97_rst_n,
 	output videoin_rst_n,
 	output flash_rst_n
 );
 
-reg [19:0] rst_debounce;
-initial rst_debounce <= 20'h02;
-initial sys_rst <= 1'b1;
+reg [19:0] rst_debounce = 20'h02;
+reg sys_rst_reg = 1'b1;
+assign sys_rst = sys_rst_reg;
+
 always @(posedge sys_clk) begin
 	if(trigger_reset)
 		rst_debounce <= 20'hFFFFF;
 	else if(rst_debounce != 20'd0)
 		rst_debounce <= rst_debounce - 20'd1;
-	sys_rst <= rst_debounce != 20'd0;
+	sys_rst_reg <= rst_debounce != 20'd0;
 end
 
 assign ac97_rst_n = ~sys_rst;

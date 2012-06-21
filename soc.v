@@ -3,11 +3,6 @@
 `include "lm32_include.v"
 
 module soc(
-	input clkfx_sys_clkin,
-	output reset0_ac97_rst_n,
-	output reset0_flash_rst_n,
-	input reset0_trigger_reset,
-	output reset0_videoin_rst_n
 );
 
 reg clkfx_sys_clkout;
@@ -301,6 +296,10 @@ always @(posedge clkfx_sys_clkout) begin
 		frag_slave_sel_r <= frag_slave_sel;
 	end
 end
+
+wire reset0_trigger_reset;
+
+assign reset0_trigger_reset = 1'b0;
 
 m1reset m1reset(
 	.trigger_reset(reset0_trigger_reset),

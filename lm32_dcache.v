@@ -297,7 +297,7 @@ wire switch_to_kernel_mode;
 wire switch_to_user_mode;
 reg [`LM32_WORD_RNG] dtlb_update_vaddr_csr_reg = `LM32_WORD_WIDTH'd0;
 reg [`LM32_WORD_RNG] dtlb_update_paddr_csr_reg = `LM32_WORD_WIDTH'd0;
-reg [1:0] dtlb_state = `LM32_TLB_STATE_CHECK;
+reg [1:0] dtlb_state;
 reg [`LM32_WORD_RNG] dtlb_ctrl_csr_reg = `LM32_WORD_WIDTH'd0;
 reg dtlb_updating;
 reg [addr_dtlb_index_width-1:0] dtlb_update_set;
