@@ -587,7 +587,7 @@ begin
                 refill_address <= address_f;
                 state <= `LM32_IC_STATE_FLUSH;
             end
-            else if (miss == `TRUE)
+            else if (miss == `TRUE && itlb_miss_int == `FALSE)
             begin
 `ifdef CFG_MMU_ENABLED
                 physical_refill_address <= physical_address[`LM32_PC_RNG];
