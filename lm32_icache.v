@@ -761,6 +761,7 @@ always @(posedge clk_i `CFG_RESET_SENSITIVITY)
 begin
 	if (rst_i == `TRUE)
 	begin
+		$display("ITLB STATE MACHINE RESET");
 		itlb_flushing <= 1;
 		itlb_flush_set <= {addr_itlb_index_width{1'b1}};
 		itlb_state <= `LM32_TLB_STATE_FLUSH;

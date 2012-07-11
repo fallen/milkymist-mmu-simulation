@@ -342,6 +342,17 @@ lm32_top lm32(
 	.rst_i(reset0_sys_rst)
 );
 
+always @(posedge clkfx_sys_clkout)
+begin
+	if ((cpu0__inst_D_ADR_O[31:18] == 14'd0 && cpu0_dbus_wishbone_ack_i) || (cpu0__inst_I_ADR_O[31:18] == 14'd0 && cpu0_ibus_wishbone_ack_i))
+	begin
+		sram0_wishbone_err_o <= 1'b1;
+		$display("NULL pointer catched !");
+	end
+	else
+		sram0_wishbone_err_o <= 1'b0;
+end
+
 reg [31:0] mem[0:16383];
 reg [31:0] memadr;
 always @(posedge clkfx_sys_clkout) begin

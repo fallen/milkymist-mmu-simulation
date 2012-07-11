@@ -757,6 +757,7 @@ always @(posedge clk_i `CFG_RESET_SENSITIVITY)
 begin
 	if (rst_i == `TRUE)
 	begin
+		$display("DTLB STATE MACHINE RESET");
 		dtlb_flushing <= 1;
 		dtlb_flush_set <= {addr_dtlb_index_width{1'b1}};
 		dtlb_state <= `LM32_TLB_STATE_FLUSH;
