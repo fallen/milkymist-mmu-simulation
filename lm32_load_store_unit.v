@@ -104,6 +104,7 @@ module lm32_load_store_unit (
     csr_write_data,
     csr_write_enable,
     eret_q_x,
+    csr_psw,
 `endif
     // From Wishbone
     d_dat_i,
@@ -177,6 +178,7 @@ input eret_q_x;
 input [`LM32_CSR_RNG] csr;				// CSR read/write index
 input [`LM32_WORD_RNG] csr_write_data;			// Data to write to specified CSR
 input csr_write_enable;					// CSR write enable
+input [`LM32_WORD_RNG] csr_psw;
 `endif
 
 input [`LM32_WORD_RNG] store_operand_x;                 // Data read from register to store
@@ -440,6 +442,7 @@ lm32_dcache #(
     .exception_x	    (exception_x),
     .eret_q_x		    (eret_q_x),
     .exception_m	    (exception_m),
+    .csr_psw		    (csr_psw),
 `endif
     // ----- Outputs -----
     .stall_request          (dcache_stall_request),

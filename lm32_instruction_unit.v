@@ -101,6 +101,7 @@ module lm32_instruction_unit (
     exception_m,
 `ifdef CFG_MMU_ENABLED
     exception_x,
+    csr_psw,
 `endif
     branch_taken_m,
     branch_mispredict_taken_m,
@@ -264,6 +265,7 @@ input eret_q_x;
 input [`LM32_CSR_RNG] csr;				// CSR read/write index
 input [`LM32_WORD_RNG] csr_write_data;			// Data to write to specified CSR
 input csr_write_enable;					// CSR write enable
+input [`LM32_WORD_RNG] csr_psw;
 `endif
 
 /////////////////////////////////////////////////////
@@ -494,6 +496,7 @@ lm32_icache #(
     .csr		    (csr),
     .csr_write_data	    (csr_write_data),
     .csr_write_enable	    (csr_write_enable),
+    .csr_psw		    (csr_psw),
     .exception_x	    (exception_x),
     .eret_q_x		    (eret_q_x),
     .exception_m	    (exception_m),

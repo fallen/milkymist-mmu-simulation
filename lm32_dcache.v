@@ -80,6 +80,9 @@
 `define LM32_TLB_CTRL_SWITCH_TO_USER_MODE	5'h8
 `define LM32_TLB_CTRL_INVALIDATE_ENTRY		5'h10
 
+// FIXME: update the value
+`define LM32_CSR_PSW_DTLBE		 `LM32_WORD_WIDTH'h01
+
 `define LM32_TLB_STATE_CHECK		 2'b01
 `define LM32_TLB_STATE_FLUSH		 2'b10
 
@@ -114,6 +117,7 @@ module lm32_dcache (
     exception_x,
     eret_q_x,
     exception_m,
+    csr_psw,
 `endif
     // ----- Outputs -----
     stall_request,
@@ -217,6 +221,7 @@ input csr_write_enable;					// CSR write enable
 input exception_x;					// An exception occured in the X stage
 input exception_m;
 input eret_q_x;
+input [`LM32_WORD_RNG] csr_psw;
 
 `endif
 
@@ -444,7 +449,7 @@ generate
 
 assign way_match[i] = 
 `ifdef CFG_MMU_ENABLED
-			(kernel_mode_reg == `LM32_USER_MODE) ?
+			(dtlb_enabled == `TRUE) ?
 			({way_tag[i], way_valid[i]} == {dtlb_lookup, `TRUE}) : 
 `endif
 		      ({way_tag[i], way_valid[i]} == {address_m[`LM32_DC_ADDR_TAG_RNG], `TRUE});
@@ -554,7 +559,7 @@ assign refill = state[2];
 assign miss = (~(|way_match)) && (load_q_m == `TRUE) && (stall_m == `FALSE) && (~dtlb_miss);
 assign stall_request = (check == `FALSE) || (dtlb_state == `LM32_TLB_STATE_FLUSH 
 `ifdef CFG_MMU_ENABLED
-			&& kernel_mode_reg != `LM32_KERNEL_MODE
+			&& (dtlb_enabled == `TRUE)
 `endif
 			);
 
@@ -686,6 +691,8 @@ endgenerate
 `ifdef CFG_MMU_ENABLED
 // Beginning of MMU specific code
 
+assign dtlb_enabled = csr_psw[`LM32_CSR_PSW_DTLBE];
+
 // Compute address to use to index into the DTLB data memory
 
 assign dtlb_data_read_address = address_x[`LM32_DTLB_IDX_RNG];
@@ -697,7 +704,7 @@ assign dtlb_data_write_address = dtlb_update_vaddr_csr_reg[`LM32_DTLB_IDX_RNG];
 assign dtlb_data_read_port_enable = (stall_x == `FALSE) || !stall_m;
 assign dtlb_write_port_enable = dtlb_updating || dtlb_flushing;
 
-assign physical_address = (kernel_mode_reg == `LM32_KERNEL_MODE)
+assign physical_address = (dtlb_enabled == `FALSE)
 			    ? address_m
 			    : {dtlb_lookup, address_m[`LM32_PAGE_OFFSET_RNG]};
 
@@ -709,11 +716,8 @@ assign dtlb_read_tag = dtlb_read_data[`LM32_DTLB_TAG_RANGE];
 assign dtlb_data_valid = dtlb_read_data[`LM32_DTLB_VALID_BIT];
 assign dtlb_lookup = dtlb_read_data[`LM32_DTLB_LOOKUP_RANGE];
 assign csr_read_data = dtlb_miss_addr;
-assign dtlb_miss = (kernel_mode_reg == `LM32_USER_MODE) && (load_q_m || store_q_m) && ~(dtlb_data_valid);
+assign dtlb_miss = (dtlb_enabled == `TRUE) && (load_q_m || store_q_m) && ~(dtlb_data_valid);
 assign dtlb_miss_int = (dtlb_miss || dtlb_miss_q);
-
-assign switch_to_kernel_mode = (/*(kernel_mode_reg == `LM32_KERNEL_MODE) && */csr_write_enable && (csr == `LM32_CSR_TLB_CTRL) && csr_write_data[5:0] == {`LM32_TLB_CTRL_SWITCH_TO_KERNEL_MODE, 1'b1});
-assign switch_to_user_mode = (/*(kernel_mode_reg == `LM32_KERNEL_MODE) && */csr_write_enable && (csr == `LM32_CSR_TLB_CTRL) && csr_write_data[5:0] == {`LM32_TLB_CTRL_SWITCH_TO_USER_MODE, 1'b1});
 
 // CSR Write
 always @(posedge clk_i `CFG_RESET_SENSITIVITY)

@@ -781,6 +781,7 @@ reg ext_break_r;
 `ifdef CFG_MMU_ENABLED
 wire dtlb_miss_exception;
 wire itlb_miss_exception;
+reg [`LM32_WORD_RNG] lm32_csr_psw_reg;
 `endif
 
 /////////////////////////////////////////////////////
@@ -849,6 +850,7 @@ lm32_instruction_unit #(
     .csr_write_data	    (operand_1_x),
     .csr_write_enable	    (csr_write_enable_q_x),
     .eret_q_x		    (eret_q_x),
+    .csr_psw		    (lm32_csr_psw_reg),
 `endif
 `ifdef CFG_IWB_ENABLED
     // From Wishbone
@@ -1028,6 +1030,7 @@ lm32_load_store_unit #(
     .csr_write_data         (operand_1_x),
     .csr_write_enable       (csr_write_enable_q_x),
     .eret_q_x		    (eret_q_x),
+    .csr_psw		    (lm32_csr_psw_reg),
 `endif
     // From Wishbone
     .d_dat_i                (D_DAT_I),
@@ -2173,6 +2176,28 @@ begin
     default:        csr_read_data_x = {`LM32_WORD_WIDTH{1'bx}};
     endcase
 end
+
+`ifdef CFG_MMU_ENABLED
+
+always @(posedge clk_i `CFG_RESET_SENSITIVITY)
+begin
+	if (rst_i)
+	begin
+		lm32_csr_psw_reg <= `LM32_WORD_WIDTH'h0;
+	end
+	else
+	if (csr_write_enable_q_x)
+	begin
+		case (csr_x)
+		// operand_1_x is csr_write_data
+		`LM32_CSR_PSW:
+			lm32_csr_psw_reg <= operand_1_x;
+		`LM32_CSR_IE:
+			lm32_csr_psw_reg[2:0] <= operand_1_x[2:0];
+		endcase
+	end
+end
+`endif
 
 /////////////////////////////////////////////////////
 // Sequential Logic

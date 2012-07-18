@@ -80,6 +80,9 @@
 
 `ifdef CFG_MMU_ENABLED
 
+// FIXME: update the value
+`define LM32_CSR_PSW_ITLBE		`LM32_WORD_WIDTH'h02
+
 `define LM32_ITLB_CTRL_FLUSH		 	5'h1
 `define LM32_ITLB_CTRL_UPDATE		 	5'h2
 `define LM32_TLB_CTRL_SWITCH_TO_KERNEL_MODE	5'h4
@@ -119,6 +122,7 @@ module lm32_icache (
     csr,
     csr_write_data,
     csr_write_enable,
+    csr_psw,
     exception_x,
     eret_q_x,
     exception_m,
@@ -226,6 +230,7 @@ input select_f;                                     // Instruction in F stage is
 input [`LM32_CSR_RNG] csr;				// CSR read/write index
 input [`LM32_WORD_RNG] csr_write_data;			// Data to write to specified CSR
 input csr_write_enable;					// CSR write enable
+input [`LM32_WORD_RNG] csr_psw;
 input exception_x;					// An exception occured in the X stage
 input exception_m;
 input eret_q_x;
@@ -321,6 +326,7 @@ wire itlb_data_valid;
 wire [`LM32_ITLB_LOOKUP_RANGE] itlb_lookup;
 reg go_to_user_mode;
 reg go_to_user_mode_2;
+wire itlb_enabled;
 
 `endif
 
@@ -427,7 +433,7 @@ generate
 
 assign way_match[i] =
 `ifdef CFG_MMU_ENABLED
-			(kernel_mode_reg == `LM32_USER_MODE) ?
+			(itlb_enabled == `TRUE) ?
 			({way_tag[i], way_valid[i]} == {itlb_lookup, `TRUE }) : 
 `endif
 			({way_tag[i], way_valid[i]} == {address_f[`LM32_IC_ADDR_TAG_RNG], `TRUE});
@@ -649,6 +655,8 @@ end
 endgenerate
 
 `ifdef CFG_MMU_ENABLED
+
+assign itlb_enabled = csr_psw[`LM32_CSR_PSW_ITLBE];
    
 // Compute address to use to index into the ITLB data memory
 assign itlb_data_read_address = address_a[`LM32_ITLB_IDX_RNG];
@@ -659,7 +667,7 @@ assign itlb_data_write_address = itlb_update_vaddr_csr_reg[`LM32_ITLB_IDX_RNG];
 assign itlb_data_read_port_enable = (stall_a == `FALSE) || !stall_f;
 assign itlb_write_port_enable = itlb_updating || itlb_flushing;
 
-assign physical_address = (kernel_mode_reg == `LM32_KERNEL_MODE)
+assign physical_address = (itlb_enabled == `FALSE)
 			    ? {address_f, 2'b0}
 			    : {itlb_lookup, address_f[`LM32_PAGE_OFFSET_RNG+2], 2'b0};
 
@@ -670,11 +678,8 @@ assign itlb_write_data = (itlb_flushing == `TRUE)
 assign pa = physical_address;
 assign kernel_mode = kernel_mode_reg;
 
-assign switch_to_kernel_mode = (/*(kernel_mode_reg == `LM32_KERNEL_MODE) && */csr_write_enable && (csr == `LM32_CSR_TLB_CTRL) && csr_write_data[5:0] == {`LM32_TLB_CTRL_SWITCH_TO_KERNEL_MODE, 1'b0});
-assign switch_to_user_mode = (/*(kernel_mode_reg == `LM32_KERNEL_MODE) && */csr_write_enable && (csr == `LM32_CSR_TLB_CTRL) && csr_write_data[5:0] == {`LM32_TLB_CTRL_SWITCH_TO_USER_MODE, 1'b0});
-
 assign csr_read_data = {itlb_miss_addr, 2'b0};
-assign itlb_miss = (kernel_mode_reg == `LM32_USER_MODE) && (read_enable_f) && ~(itlb_data_valid);
+assign itlb_miss = (itlb_enabled == `TRUE) && (read_enable_f) && ~(itlb_data_valid);
 assign itlb_miss_int = (itlb_miss || itlb_miss_q);
 assign itlb_read_tag = itlb_read_data[`LM32_ITLB_TAG_RANGE];
 assign itlb_data_valid = itlb_read_data[`LM32_ITLB_VALID_BIT];
