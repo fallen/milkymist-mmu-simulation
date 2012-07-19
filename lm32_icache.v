@@ -107,6 +107,9 @@ module lm32_icache (
     rst_i,    
     stall_a,
     stall_f,
+`ifdef CFG_MMU_ENABLED
+    stall_x,
+`endif
     address_a,
     address_f,
     read_enable_f,
@@ -210,6 +213,7 @@ input rst_i;                                        // Reset
 
 input stall_a;                                      // Stall instruction in A stage
 input stall_f;                                      // Stall instruction in F stage
+input stall_x;					    // Stall instruction in X stage
 
 input valid_d;                                      // Valid instruction in D stage
 input branch_predict_taken_d;                       // Instruction in D stage is a branch and is predicted taken
@@ -326,7 +330,7 @@ wire itlb_data_valid;
 wire [`LM32_ITLB_LOOKUP_RANGE] itlb_lookup;
 reg go_to_user_mode;
 reg go_to_user_mode_2;
-wire itlb_enabled;
+reg itlb_enabled;
 
 `endif
 
@@ -656,8 +660,6 @@ endgenerate
 
 `ifdef CFG_MMU_ENABLED
 
-assign itlb_enabled = csr_psw[`LM32_CSR_PSW_ITLBE];
-   
 // Compute address to use to index into the ITLB data memory
 assign itlb_data_read_address = address_a[`LM32_ITLB_IDX_RNG];
 
@@ -759,6 +761,21 @@ begin
 		itlb_ctrl_csr_reg[0] <= 0;
 		itlb_update_vaddr_csr_reg[0] <= 0;
 		itlb_update_paddr_csr_reg[0] <= 0;
+	end
+end
+
+always @(posedge clk_i `CFG_RESET_SENSITIVITY)
+begin
+	if (rst_i == `TRUE)
+	begin
+		itlb_enabled <= `FALSE;
+	end
+	else
+	begin
+		if (~stall_x)
+		begin
+			itlb_enabled <= csr_psw[`LM32_CSR_PSW_ITLBE];
+		end
 	end
 end
 

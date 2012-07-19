@@ -490,6 +490,9 @@ lm32_icache #(
     .rst_i                  (rst_i),      
     .stall_a                (stall_a),
     .stall_f                (stall_f),
+`ifdef CFG_MMU_ENABLED
+    .stall_x		    (stall_x),
+`endif
     .branch_predict_taken_d (branch_predict_taken_d),
     .valid_d                (valid_d),
     .address_a              (pc_a),
