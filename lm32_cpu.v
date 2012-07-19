@@ -630,11 +630,32 @@ reg [`LM32_WORD_RNG] cc;                        // Cycle counter CSR
 reg [`LM32_WORD_RNG] csr_read_data_x;           // Data read from CSRs
 
 // To/from instruction unit
+`ifdef CFG_PIPELINE_TRACES
+wire [`LM32_PC_RNG] pc_a;
+`endif
 wire [`LM32_PC_RNG] pc_f;                       // PC of instruction in F stage
 wire [`LM32_PC_RNG] pc_d;                       // PC of instruction in D stage
 wire [`LM32_PC_RNG] pc_x;                       // PC of instruction in X stage
 wire [`LM32_PC_RNG] pc_m;                       // PC of instruction in M stage
 wire [`LM32_PC_RNG] pc_w;                       // PC of instruction in W stage
+
+`ifdef CFG_PIPELINE_TRACES
+always @(posedge clk_i `CFG_RESET_SENSITIVITY)
+begin
+	if (~rst_i)
+	begin
+		if (~stall_a)
+			$display("[%t] Addressing inst @ 0x%08X", $time, pc_a);
+		if (~stall_f)
+			$display("[%t] Fetching   inst @ 0x%08X", $time, pc_f);
+		if (~stall_d)
+			$display("[%t] Decoding   inst @ 0x%08X", $time, pc_d);
+		if (~stall_x)
+			$display("[%t] Executing  inst @ 0x%08X", $time, pc_x);
+	end
+end
+`endif
+
 `ifdef CFG_TRACE_ENABLED
 reg [`LM32_PC_RNG] pc_c;                        // PC of last commited instruction
 `endif
@@ -866,6 +887,9 @@ lm32_instruction_unit #(
 `endif
     // ----- Outputs -------
     // To pipeline
+`ifdef CFG_PIPELINE_TRACES
+    .pc_a		    (pc_a),
+`endif
     .pc_f                   (pc_f),
     .pc_d                   (pc_d),
     .pc_x                   (pc_x),
