@@ -575,6 +575,10 @@ begin
 `endif
           pc_a = branch_target_m;
         end
+`ifdef CFG_FAST_UNCONDITIONAL_BRANCH
+      else if (branch_taken_x == `TRUE)
+        pc_a = branch_target_x;
+`endif
       else
 	if ( (valid_d == `TRUE) && (branch_predict_taken_d == `TRUE) )
         begin
