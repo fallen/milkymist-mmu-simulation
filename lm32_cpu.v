@@ -646,12 +646,12 @@ begin
 	begin
 		if (~stall_a)
 			$display("[%t] Addressing inst @ 0x%08X", $time, pc_a);
-		if (~stall_f)
+/*		if (~stall_f)
 			$display("[%t] Fetching   inst @ 0x%08X", $time, pc_f);
 		if (~stall_d)
 			$display("[%t] Decoding   inst @ 0x%08X", $time, pc_d);
 		if (~stall_x)
-			$display("[%t] Executing  inst @ 0x%08X", $time, pc_x);
+			$display("[%t] Executing  inst @ 0x%08X", $time, pc_x);*/
 	end
 end
 `endif
@@ -872,6 +872,7 @@ lm32_instruction_unit #(
     .csr_write_enable	    (csr_write_enable_q_x),
     .eret_q_x		    (eret_q_x),
     .csr_psw		    (lm32_csr_psw_reg),
+    .q_x		    (q_x),
 `endif
 `ifdef CFG_IWB_ENABLED
     // From Wishbone
@@ -2197,6 +2198,7 @@ begin
     `LM32_CSR_CFG2: csr_read_data_x = cfg2;
     `LM32_CSR_TLB_VADDRESS: csr_read_data_x = load_store_csr_read_data_x;
     `LM32_CSR_TLB_PADDRESS: csr_read_data_x = instruction_csr_read_data_x;
+    `LM32_CSR_PSW:	csr_read_data_x = lm32_csr_psw_reg;
     default:        csr_read_data_x = {`LM32_WORD_WIDTH{1'bx}};
     endcase
 end
@@ -2210,15 +2212,50 @@ begin
 		lm32_csr_psw_reg <= `LM32_WORD_WIDTH'h0;
 	end
 	else
-	if (csr_write_enable_q_x)
 	begin
-		case (csr_x)
-		// operand_1_x is csr_write_data
-		`LM32_CSR_PSW:
-			lm32_csr_psw_reg <= operand_1_x;
-		`LM32_CSR_IE:
-			lm32_csr_psw_reg[2:0] <= operand_1_x[2:0];
-		endcase
+`ifdef CFG_DEBUG_ENABLED
+		if (non_debug_exception_q_w == `TRUE)
+		begin
+		    // Save and then clear ITLB enable
+		    lm32_csr_psw_reg[`LM32_CSR_PSW_EITLBE] <= lm32_csr_psw_reg[`LM32_CSR_PSW_ITLBE];
+		    lm32_csr_psw_reg[`LM32_CSR_PSW_ITLBE] <= `FALSE;
+		end
+		else if (debug_exception_q_w == `TRUE)
+		begin
+		    // Save and then clear TLB enable
+		    lm32_csr_psw_reg[`LM32_CSR_PSW_BITLBE] <= lm32_csr_psw_reg[`LM32_CSR_PSW_ITLBE];
+		    lm32_csr_psw_reg[`LM32_CSR_PSW_ITLBE] <= `FALSE;
+		end
+`else
+		if (exception_q_w == `TRUE)
+		begin
+		    // Save and then clear ITLB enable
+		    lm32_csr_psw_reg[`LM32_CSR_PSW_EITLBE] <= lm32_csr_psw_reg[`LM32_CSR_PSW_ITLBE];
+		    lm32_csr_psw_reg[`LM32_CSR_PSW_ITLBE] <= `FALSE;
+		end
+`endif
+		else if (stall_x == `FALSE)
+		begin
+		    if (eret_q_x == `TRUE)
+			// Restore ITLB enable
+			lm32_csr_psw_reg[`LM32_CSR_PSW_ITLBE] <= lm32_csr_psw_reg[`LM32_CSR_PSW_EITLBE];
+`ifdef CFG_DEBUG_ENABLED
+		    else if (bret_q_x == `TRUE)
+			// Restore ITLB enable
+			lm32_csr_psw_reg[`LM32_CSR_PSW_ITLBE] <= lm32_csr_psw_reg[`LM32_CSR_PSW_BITLBE];
+`endif
+		    else if (csr_write_enable_q_x == `TRUE)
+		    begin
+			// Handle wcsr write
+			case (csr_x)
+			// operand_1_x is csr_write_data
+			`LM32_CSR_PSW:
+				lm32_csr_psw_reg <= operand_1_x;
+			`LM32_CSR_IE:
+				lm32_csr_psw_reg[2:0] <= operand_1_x[2:0];
+			endcase
+		    end
+		end
 	end
 end
 `endif

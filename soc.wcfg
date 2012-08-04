@@ -9,7 +9,7 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="144" />
+   <WVObjectSize size="192" />
    <wvobject fp_name="/soc/memadr" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">memadr[31:0]</obj_property>
       <obj_property name="ObjectShortName">memadr[31:0]</obj_property>
@@ -59,10 +59,6 @@
    <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/stall_m" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">stall_m</obj_property>
       <obj_property name="ObjectShortName">stall_m</obj_property>
-   </wvobject>
-   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/d_adr_o_sampling" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">d_adr_o_sampling</obj_property>
-      <obj_property name="ObjectShortName">d_adr_o_sampling</obj_property>
    </wvobject>
    <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/physical_address" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">physical_address[31:0]</obj_property>
@@ -152,10 +148,6 @@
       <obj_property name="ElementShortName">way_match[0:0]</obj_property>
       <obj_property name="ObjectShortName">way_match[0:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/miss" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">miss</obj_property>
-      <obj_property name="ObjectShortName">miss</obj_property>
-   </wvobject>
    <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/tmem_read_address" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">tmem_read_address[7:0]</obj_property>
       <obj_property name="ObjectShortName">tmem_read_address[7:0]</obj_property>
@@ -204,15 +196,6 @@
    <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/restart_request" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">restart_request</obj_property>
       <obj_property name="ObjectShortName">restart_request</obj_property>
-   </wvobject>
-   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/refill_request" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">refill_request</obj_property>
-      <obj_property name="ObjectShortName">refill_request</obj_property>
-   </wvobject>
-   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/refill_address" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">refill_address[31:0]</obj_property>
-      <obj_property name="ObjectShortName">refill_address[31:0]</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/refilling" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">refilling</obj_property>
@@ -472,11 +455,6 @@
       <obj_property name="ElementShortName">csr_write_enable</obj_property>
       <obj_property name="ObjectShortName">csr_write_enable</obj_property>
    </wvobject>
-   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/latest_store_tlb_lookup" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">latest_store_tlb_lookup[31:0]</obj_property>
-      <obj_property name="ObjectShortName">latest_store_tlb_lookup[31:0]</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
-   </wvobject>
    <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/csr_read_data" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">csr_read_data[31:0]</obj_property>
       <obj_property name="ObjectShortName">csr_read_data[31:0]</obj_property>
@@ -614,10 +592,6 @@
       <obj_property name="ElementShortName">kill_f</obj_property>
       <obj_property name="ObjectShortName">kill_f</obj_property>
    </wvobject>
-   <wvobject fp_name="/soc/lm32/cpu/branch_taken_m" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">branch_taken_m</obj_property>
-      <obj_property name="ObjectShortName">branch_taken_m</obj_property>
-   </wvobject>
    <wvobject fp_name="/soc/lm32/cpu/valid_m" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">valid_m</obj_property>
       <obj_property name="ObjectShortName">valid_m</obj_property>
@@ -626,14 +600,6 @@
       <obj_property name="ElementShortName">condition_met_m</obj_property>
       <obj_property name="ObjectShortName">condition_met_m</obj_property>
    </wvobject>
-   <wvobject fp_name="/soc/lm32/cpu/branch_predict_m" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">branch_predict_m</obj_property>
-      <obj_property name="ObjectShortName">branch_predict_m</obj_property>
-   </wvobject>
-   <wvobject fp_name="/soc/lm32/cpu/branch_predict_taken_m" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">branch_predict_taken_m</obj_property>
-      <obj_property name="ObjectShortName">branch_predict_taken_m</obj_property>
-   </wvobject>
    <wvobject fp_name="/soc/lm32/cpu/dcache_refill_request" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">dcache_refill_request</obj_property>
       <obj_property name="ObjectShortName">dcache_refill_request</obj_property>
@@ -641,5 +607,231 @@
    <wvobject fp_name="/soc/lm32/cpu/icache_refill_request" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">icache_refill_request</obj_property>
       <obj_property name="ObjectShortName">icache_refill_request</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/lm32_csr_psw_reg" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">lm32_csr_psw_reg[31:0]</obj_property>
+      <obj_property name="ObjectShortName">lm32_csr_psw_reg[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache/itlb_enabled" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">itlb_enabled</obj_property>
+      <obj_property name="ObjectShortName">itlb_enabled</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache/itlb_miss_int" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">itlb_miss_int</obj_property>
+      <obj_property name="ObjectShortName">itlb_miss_int</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache/itlb_miss" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">itlb_miss</obj_property>
+      <obj_property name="ObjectShortName">itlb_miss</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache/itlb_miss_addr" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">itlb_miss_addr[31:2]</obj_property>
+      <obj_property name="ObjectShortName">itlb_miss_addr[31:2]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache/itlb_miss_q" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">itlb_miss_q</obj_property>
+      <obj_property name="ObjectShortName">itlb_miss_q</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache/in_exception" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">in_exception</obj_property>
+      <obj_property name="ObjectShortName">in_exception</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache/itlb_flushing" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">itlb_flushing</obj_property>
+      <obj_property name="ObjectShortName">itlb_flushing</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache/itlb_flush_set" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">itlb_flush_set[9:0]</obj_property>
+      <obj_property name="ObjectShortName">itlb_flush_set[9:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache/itlb_state" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">itlb_state[1:0]</obj_property>
+      <obj_property name="ObjectShortName">itlb_state[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache/itlb_update_paddr_csr_reg" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">itlb_update_paddr_csr_reg[31:0]</obj_property>
+      <obj_property name="ObjectShortName">itlb_update_paddr_csr_reg[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache/itlb_update_set" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">itlb_update_set[9:0]</obj_property>
+      <obj_property name="ObjectShortName">itlb_update_set[9:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache/itlb_update_vaddr_csr_reg" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">itlb_update_vaddr_csr_reg[31:0]</obj_property>
+      <obj_property name="ObjectShortName">itlb_update_vaddr_csr_reg[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache/itlb_updating" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">itlb_updating</obj_property>
+      <obj_property name="ObjectShortName">itlb_updating</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache/itlb_write_data" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">itlb_write_data[30:0]</obj_property>
+      <obj_property name="ObjectShortName">itlb_write_data[30:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache/itlb_write_port_enable" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">itlb_write_port_enable</obj_property>
+      <obj_property name="ObjectShortName">itlb_write_port_enable</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache/miss" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">miss</obj_property>
+      <obj_property name="ObjectShortName">miss</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache/way_valid" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">way_valid[0:0]</obj_property>
+      <obj_property name="ObjectShortName">way_valid[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache/way_match" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">way_match[0:0]</obj_property>
+      <obj_property name="ObjectShortName">way_match[0:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache/refill_address" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">refill_address[31:2]</obj_property>
+      <obj_property name="ObjectShortName">refill_address[31:2]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache/restart_request" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">restart_request</obj_property>
+      <obj_property name="ObjectShortName">restart_request</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/kill_d" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">kill_d</obj_property>
+      <obj_property name="ObjectShortName">kill_d</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/kill_f" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">kill_f</obj_property>
+      <obj_property name="ObjectShortName">kill_f</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/kill_m" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">kill_m</obj_property>
+      <obj_property name="ObjectShortName">kill_m</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/kill_w" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">kill_w</obj_property>
+      <obj_property name="ObjectShortName">kill_w</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/kill_x" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">kill_x</obj_property>
+      <obj_property name="ObjectShortName">kill_x</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/valid_a" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">valid_a</obj_property>
+      <obj_property name="ObjectShortName">valid_a</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/valid_d" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">valid_d</obj_property>
+      <obj_property name="ObjectShortName">valid_d</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/valid_f" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">valid_f</obj_property>
+      <obj_property name="ObjectShortName">valid_f</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/valid_m" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">valid_m</obj_property>
+      <obj_property name="ObjectShortName">valid_m</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/valid_w" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">valid_w</obj_property>
+      <obj_property name="ObjectShortName">valid_w</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/valid_x" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">valid_x</obj_property>
+      <obj_property name="ObjectShortName">valid_x</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/branch_d" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">branch_d</obj_property>
+      <obj_property name="ObjectShortName">branch_d</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/branch_flushX_m" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">branch_flushX_m</obj_property>
+      <obj_property name="ObjectShortName">branch_flushX_m</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/branch_m" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">branch_m</obj_property>
+      <obj_property name="ObjectShortName">branch_m</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/branch_mispredict_taken_m" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">branch_mispredict_taken_m</obj_property>
+      <obj_property name="ObjectShortName">branch_mispredict_taken_m</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/branch_predict_d" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">branch_predict_d</obj_property>
+      <obj_property name="ObjectShortName">branch_predict_d</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/branch_predict_m" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">branch_predict_m</obj_property>
+      <obj_property name="ObjectShortName">branch_predict_m</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/branch_predict_taken_d" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">branch_predict_taken_d</obj_property>
+      <obj_property name="ObjectShortName">branch_predict_taken_d</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/branch_predict_taken_m" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">branch_predict_taken_m</obj_property>
+      <obj_property name="ObjectShortName">branch_predict_taken_m</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/branch_predict_taken_x" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">branch_predict_taken_x</obj_property>
+      <obj_property name="ObjectShortName">branch_predict_taken_x</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/branch_predict_x" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">branch_predict_x</obj_property>
+      <obj_property name="ObjectShortName">branch_predict_x</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/branch_reg_d" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">branch_reg_d</obj_property>
+      <obj_property name="ObjectShortName">branch_reg_d</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/branch_taken_m" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">branch_taken_m</obj_property>
+      <obj_property name="ObjectShortName">branch_taken_m</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/branch_target_d" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">branch_target_d[31:2]</obj_property>
+      <obj_property name="ObjectShortName">branch_target_d[31:2]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/branch_target_m" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">branch_target_m[31:2]</obj_property>
+      <obj_property name="ObjectShortName">branch_target_m[31:2]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/branch_target_x" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">branch_target_x[31:2]</obj_property>
+      <obj_property name="ObjectShortName">branch_target_x[31:2]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/branch_x" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">branch_x</obj_property>
+      <obj_property name="ObjectShortName">branch_x</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache/read_enable_f" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">read_enable_f</obj_property>
+      <obj_property name="ObjectShortName">read_enable_f</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache_physical_refill_address" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">icache_physical_refill_address[31:2]</obj_property>
+      <obj_property name="ObjectShortName">icache_physical_refill_address[31:2]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache_refill_address" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">icache_refill_address[31:2]</obj_property>
+      <obj_property name="ObjectShortName">icache_refill_address[31:2]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache_refill_data" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">icache_refill_data[31:0]</obj_property>
+      <obj_property name="ObjectShortName">icache_refill_data[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache/physical_address" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">physical_address[31:0]</obj_property>
+      <obj_property name="ObjectShortName">physical_address[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache/itlb_data_valid" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">itlb_data_valid</obj_property>
+      <obj_property name="ObjectShortName">itlb_data_valid</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache/itlb_lookup" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">itlb_lookup[19:0]</obj_property>
+      <obj_property name="ObjectShortName">itlb_lookup[19:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache/itlb_read_tag" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">itlb_read_tag</obj_property>
+      <obj_property name="ObjectShortName">itlb_read_tag</obj_property>
    </wvobject>
 </wave_config>

@@ -124,6 +124,7 @@ module lm32_instruction_unit (
     csr_write_data,
     csr_write_enable,
     eret_q_x,
+    q_x,
 `endif
 `ifdef CFG_IWB_ENABLED
     // From Wishbone
@@ -265,6 +266,7 @@ input [`LM32_WORD_RNG] jtag_address;                    // JTAG read/write addre
 `ifdef CFG_MMU_ENABLED
 input exception_x;                                      // An exception occured in the X stage
 input eret_q_x;
+input q_x;
 input [`LM32_CSR_RNG] csr;				// CSR read/write index
 input [`LM32_WORD_RNG] csr_write_data;			// Data to write to specified CSR
 input csr_write_enable;					// CSR write enable
@@ -492,11 +494,17 @@ lm32_icache #(
     .stall_f                (stall_f),
 `ifdef CFG_MMU_ENABLED
     .stall_x		    (stall_x),
+    .stall_m		    (stall_m),
 `endif
     .branch_predict_taken_d (branch_predict_taken_d),
     .valid_d                (valid_d),
     .address_a              (pc_a),
     .address_f              (pc_f),
+`ifdef CFG_MMU_ENABLED
+    .pc_x		    (pc_x),
+    .pc_m		    (pc_m),
+    .pc_w		    (pc_w),
+`endif
     .read_enable_f          (icache_read_enable_f),
     .refill_ready           (icache_refill_ready),
     .refill_data            (icache_refill_data),
@@ -509,6 +517,7 @@ lm32_icache #(
     .exception_x	    (exception_x),
     .eret_q_x		    (eret_q_x),
     .exception_m	    (exception_m),
+    .q_x		    (q_x),
 `endif
     // ----- Outputs -----
     .stall_request          (icache_stall_request),
@@ -543,6 +552,7 @@ assign icache_read_enable_f =    (valid_f == `TRUE)
 `ifdef CFG_IROM_ENABLED 
                               && (irom_select_f == `FALSE)
 `endif       
+//				&& (exception_x == `FALSE)
                               ;
 `endif
 

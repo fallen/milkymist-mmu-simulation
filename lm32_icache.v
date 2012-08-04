@@ -80,9 +80,6 @@
 
 `ifdef CFG_MMU_ENABLED
 
-// FIXME: update the value
-`define LM32_CSR_PSW_ITLBE		`LM32_WORD_WIDTH'h02
-
 `define LM32_ITLB_CTRL_FLUSH		 	5'h1
 `define LM32_ITLB_CTRL_UPDATE		 	5'h2
 `define LM32_TLB_CTRL_SWITCH_TO_KERNEL_MODE	5'h4
@@ -109,9 +106,15 @@ module lm32_icache (
     stall_f,
 `ifdef CFG_MMU_ENABLED
     stall_x,
+    stall_m,
 `endif
     address_a,
     address_f,
+`ifdef CFG_MMU_ENABLED
+    pc_x,
+    pc_m,
+    pc_w,
+`endif
     read_enable_f,
     refill_ready,
     refill_data,
@@ -129,6 +132,7 @@ module lm32_icache (
     exception_x,
     eret_q_x,
     exception_m,
+    q_x,
 `endif
     // ----- Outputs -----
     stall_request,
@@ -213,13 +217,19 @@ input rst_i;                                        // Reset
 
 input stall_a;                                      // Stall instruction in A stage
 input stall_f;                                      // Stall instruction in F stage
+`ifdef CFG_MMU_ENABLED
 input stall_x;					    // Stall instruction in X stage
+input stall_m;					    // Stall instruction in X stage
+`endif
 
 input valid_d;                                      // Valid instruction in D stage
 input branch_predict_taken_d;                       // Instruction in D stage is a branch and is predicted taken
    
 input [`LM32_PC_RNG] address_a;                     // Address of instruction in A stage
 input [`LM32_PC_RNG] address_f;                     // Address of instruction in F stage
+input [`LM32_PC_RNG] pc_x;			    // Address of instruction in X stage
+input [`LM32_PC_RNG] pc_m;			    // Address of instruction in M stage
+input [`LM32_PC_RNG] pc_w;			    // Address of instruction in W stage
 input read_enable_f;                                // Indicates if cache access is valid
 
 input refill_ready;                                 // Next word of refill data is ready
@@ -238,6 +248,7 @@ input [`LM32_WORD_RNG] csr_psw;
 input exception_x;					// An exception occured in the X stage
 input exception_m;
 input eret_q_x;
+input q_x;
 `endif
 
 /////////////////////////////////////////////////////
@@ -323,7 +334,8 @@ reg itlb_updating;
 reg [addr_itlb_index_width-1:0] itlb_update_set;
 reg itlb_flushing;
 reg [addr_itlb_index_width-1:0] itlb_flush_set;
-wire itlb_miss;
+//wire itlb_miss;
+reg itlb_miss;
 reg itlb_miss_q = `FALSE;
 reg [`LM32_PC_RNG] itlb_miss_addr;
 wire itlb_data_valid;
@@ -511,7 +523,7 @@ assign flushing = |state[1:0];
 assign check = state[2];
 assign refill = state[3];
 
-assign miss = (~(|way_match)) && (read_enable_f == `TRUE) && (stall_f == `FALSE) && !(valid_d && branch_predict_taken_d);
+assign miss = (~(|way_match)) && (read_enable_f == `TRUE) && (stall_f == `FALSE) && !(valid_d && branch_predict_taken_d) && (exception_x == `FALSE);
 assign stall_request = (check == `FALSE);
 assign refill_request = (refill == `TRUE);
                       
@@ -592,7 +604,7 @@ begin
             if (iflush == `TRUE)
             begin
 `ifdef CFG_MMU_ENABLED
-                physical_refill_address <= physical_address[`LM32_PC_RNG];
+                physical_refill_address <= (itlb_data_valid) ? physical_address[`LM32_PC_RNG] : address_f;
 `endif
                 refill_address <= address_f;
                 state <= `LM32_IC_STATE_FLUSH;
@@ -600,7 +612,7 @@ begin
             else if (miss == `TRUE && itlb_miss_int == `FALSE)
             begin
 `ifdef CFG_MMU_ENABLED
-                physical_refill_address <= physical_address[`LM32_PC_RNG];
+                physical_refill_address <= (itlb_data_valid) ? physical_address[`LM32_PC_RNG] : address_f;
 `endif
                 refill_address <= address_f;
                 state <= `LM32_IC_STATE_REFILL;
@@ -681,8 +693,67 @@ assign pa = physical_address;
 assign kernel_mode = kernel_mode_reg;
 
 assign csr_read_data = {itlb_miss_addr, 2'b0};
-assign itlb_miss = (itlb_enabled == `TRUE) && (read_enable_f) && ~(itlb_data_valid);
+
+/*
+always @(posedge clk_i `CFG_RESET_SENSITIVITY)
+begin
+	if (rst_i)
+		itlb_miss <= `FALSE;
+	else
+	begin
+		itlb_miss <= (itlb_enabled == `TRUE) && (read_enable_f) && ~(itlb_data_valid);
+	end
+end
+*/
+
+/*
+always @(posedge clk_i `CFG_RESET_SENSITIVITY)
+begin
+	if (rst_i)
+		itlb_miss_int <= `FALSE;
+	else
+	begin
+		case (itlb_miss_fsm_state)
+			`ITLB_MISS_FSM_STATE_CHECK:
+			begin
+				if (itlb_miss && miss)
+				begin
+					itlb_miss_int <= `FALSE;
+					itlb_miss_fsm_state <= `ITLB_MISS_FSM_STATE_CACHE_MISS;
+				end
+				else if (itlb_miss)
+				begin
+					itlb_miss_int <= `TRUE;
+					itlb_miss_fsm_state <= `ITLB_MISS_FSM_STATE_MISS;
+				end
+				else if (miss)
+				begin
+					itlb_miss_int <= `FALSE;
+					itlb_miss_fsm_state <= `ITLB_MISS_FSM_STATE_CACHE_MISS;
+				end
+				else
+					itlb_miss_int <= `FALSE;
+			end
+
+			`ITLB_MISS_FSM_STATE_CACHE_MISS:
+			begin
+				if (itlb_miss)
+				begin
+					
+			end
+		endcase
+	end
+end
+*/
+always @(posedge clk_i)
+begin
+	itlb_miss <= (itlb_enabled == `TRUE) && (read_enable_f) && ~(itlb_data_valid) && ~(miss || refilling);
+
+end
+
+//assign itlb_miss = (itlb_enabled == `TRUE) && (read_enable_f) && ~(itlb_data_valid) && ~(miss || refilling);
 assign itlb_miss_int = (itlb_miss || itlb_miss_q);
+
 assign itlb_read_tag = itlb_read_data[`LM32_ITLB_TAG_RANGE];
 assign itlb_data_valid = itlb_read_data[`LM32_ITLB_VALID_BIT];
 assign itlb_lookup = itlb_read_data[`LM32_ITLB_LOOKUP_RANGE];
@@ -697,34 +768,6 @@ begin
 end
 `endif
 
-always @(posedge clk_i `CFG_RESET_SENSITIVITY)
-begin
-	if (rst_i == `TRUE)
-		go_to_user_mode <= `FALSE;
-	else
-		go_to_user_mode <= (eret_q_x || switch_to_user_mode);
-end
-
-always @(posedge clk_i `CFG_RESET_SENSITIVITY)
-begin
-	if (rst_i == `TRUE)
-		go_to_user_mode_2 <= `FALSE;
-	else
-		go_to_user_mode_2 <= go_to_user_mode;
-end
-
-always @(posedge clk_i `CFG_RESET_SENSITIVITY)
-begin
-	if (rst_i == `TRUE)
-		kernel_mode_reg <= `LM32_KERNEL_MODE;
-	else
-	begin
-		if (exception_x || switch_to_kernel_mode)
-			kernel_mode_reg <= `LM32_KERNEL_MODE;
-		else if (go_to_user_mode_2)
-			kernel_mode_reg <= `LM32_USER_MODE;
-	end
-end
 
 always @(posedge clk_i `CFG_RESET_SENSITIVITY)
 begin
@@ -734,7 +777,9 @@ begin
 	begin
 		if (itlb_miss && ~itlb_miss_q)
 			itlb_miss_q <= `TRUE;
-		else if (itlb_miss_q && exception_m)
+		else if (itlb_miss_q
+			// && exception_m == `TRUE
+			&& exception_x == `TRUE && stall_m == `FALSE && stall_x == `FALSE && q_x == `TRUE)
 			itlb_miss_q <= `FALSE;
 	end
 end
@@ -764,17 +809,54 @@ begin
 	end
 end
 
+reg [`LM32_PC_RNG] pc_exception;
+reg in_exception;
+
 always @(posedge clk_i `CFG_RESET_SENSITIVITY)
 begin
 	if (rst_i == `TRUE)
 	begin
 		itlb_enabled <= `FALSE;
+		in_exception <= `FALSE;
+		pc_exception <= {`LM32_PC_WIDTH{1'b0}};
 	end
 	else
 	begin
 		if (~stall_x)
 		begin
-			itlb_enabled <= csr_psw[`LM32_CSR_PSW_ITLBE];
+			if (eret_q_x)
+			begin
+//				$display("[%t] itlb_enabled <= 0x%08X upon eret", $time, csr_psw[`LM32_CSR_PSW_EITLBE]);
+				itlb_enabled <= csr_psw[`LM32_CSR_PSW_EITLBE];
+			end
+			else if (exception_x || in_exception)
+			begin
+				if (~in_exception)
+				begin
+					in_exception <= 1;
+				end
+				else
+				begin
+					if (exception_m)
+					begin
+						$display("[%t] pc_exception <= 0x%08X", $time, pc_m);
+						pc_exception <= pc_m;
+					end
+					if (pc_exception == pc_w)
+					begin
+						in_exception <= 0;
+					end
+				end
+				$display("[%t] itlb_enabled <= 0x%08X upon exception", $time, 0);
+				itlb_enabled <= 0;
+			end
+			else
+			begin
+				if (itlb_enabled != csr_psw[`LM32_CSR_PSW_ITLBE])
+					$display("[%t] itlb_enabled <= 0x%08X", $time, csr_psw[`LM32_CSR_PSW_ITLBE]);
+
+				itlb_enabled <= csr_psw[`LM32_CSR_PSW_ITLBE];
+			end
 		end
 	end
 end
@@ -798,7 +880,7 @@ begin
 		begin
 			itlb_updating <= 0;
 			itlb_flushing <= 0;
-			if (itlb_miss == `TRUE)
+			if (itlb_miss == `TRUE && itlb_miss_q == `FALSE)
 			begin
 				itlb_miss_addr <= address_f;
 				$display("WARNING : ITLB MISS on addr 0x%08X at time %t", address_f * 4, $time);
