@@ -334,8 +334,7 @@ reg itlb_updating;
 reg [addr_itlb_index_width-1:0] itlb_update_set;
 reg itlb_flushing;
 reg [addr_itlb_index_width-1:0] itlb_flush_set;
-//wire itlb_miss;
-reg itlb_miss;
+wire itlb_miss;
 reg itlb_miss_q = `FALSE;
 reg [`LM32_PC_RNG] itlb_miss_addr;
 wire itlb_data_valid;
@@ -523,7 +522,7 @@ assign flushing = |state[1:0];
 assign check = state[2];
 assign refill = state[3];
 
-assign miss = (~(|way_match)) && (read_enable_f == `TRUE) && (stall_f == `FALSE) && !(valid_d && branch_predict_taken_d) && (exception_x == `FALSE);
+assign miss = (~(|way_match)) && (read_enable_f == `TRUE) && (stall_f == `FALSE) && !(valid_d && branch_predict_taken_d);
 assign stall_request = (check == `FALSE);
 assign refill_request = (refill == `TRUE);
                       
@@ -604,7 +603,7 @@ begin
             if (iflush == `TRUE)
             begin
 `ifdef CFG_MMU_ENABLED
-                physical_refill_address <= (itlb_data_valid) ? physical_address[`LM32_PC_RNG] : address_f;
+                physical_refill_address <= physical_address[`LM32_PC_RNG];
 `endif
                 refill_address <= address_f;
                 state <= `LM32_IC_STATE_FLUSH;
@@ -612,7 +611,7 @@ begin
             else if (miss == `TRUE && itlb_miss_int == `FALSE)
             begin
 `ifdef CFG_MMU_ENABLED
-                physical_refill_address <= (itlb_data_valid) ? physical_address[`LM32_PC_RNG] : address_f;
+                physical_refill_address <= physical_address[`LM32_PC_RNG];
 `endif
                 refill_address <= address_f;
                 state <= `LM32_IC_STATE_REFILL;
@@ -693,67 +692,8 @@ assign pa = physical_address;
 assign kernel_mode = kernel_mode_reg;
 
 assign csr_read_data = {itlb_miss_addr, 2'b0};
-
-/*
-always @(posedge clk_i `CFG_RESET_SENSITIVITY)
-begin
-	if (rst_i)
-		itlb_miss <= `FALSE;
-	else
-	begin
-		itlb_miss <= (itlb_enabled == `TRUE) && (read_enable_f) && ~(itlb_data_valid);
-	end
-end
-*/
-
-/*
-always @(posedge clk_i `CFG_RESET_SENSITIVITY)
-begin
-	if (rst_i)
-		itlb_miss_int <= `FALSE;
-	else
-	begin
-		case (itlb_miss_fsm_state)
-			`ITLB_MISS_FSM_STATE_CHECK:
-			begin
-				if (itlb_miss && miss)
-				begin
-					itlb_miss_int <= `FALSE;
-					itlb_miss_fsm_state <= `ITLB_MISS_FSM_STATE_CACHE_MISS;
-				end
-				else if (itlb_miss)
-				begin
-					itlb_miss_int <= `TRUE;
-					itlb_miss_fsm_state <= `ITLB_MISS_FSM_STATE_MISS;
-				end
-				else if (miss)
-				begin
-					itlb_miss_int <= `FALSE;
-					itlb_miss_fsm_state <= `ITLB_MISS_FSM_STATE_CACHE_MISS;
-				end
-				else
-					itlb_miss_int <= `FALSE;
-			end
-
-			`ITLB_MISS_FSM_STATE_CACHE_MISS:
-			begin
-				if (itlb_miss)
-				begin
-					
-			end
-		endcase
-	end
-end
-*/
-always @(posedge clk_i)
-begin
-	itlb_miss <= (itlb_enabled == `TRUE) && (read_enable_f) && ~(itlb_data_valid) && ~(miss || refilling);
-
-end
-
-//assign itlb_miss = (itlb_enabled == `TRUE) && (read_enable_f) && ~(itlb_data_valid) && ~(miss || refilling);
+assign itlb_miss = (itlb_enabled == `TRUE) && (read_enable_f) && ~(itlb_data_valid) && (~itlb_miss_q);
 assign itlb_miss_int = (itlb_miss || itlb_miss_q);
-
 assign itlb_read_tag = itlb_read_data[`LM32_ITLB_TAG_RANGE];
 assign itlb_data_valid = itlb_read_data[`LM32_ITLB_VALID_BIT];
 assign itlb_lookup = itlb_read_data[`LM32_ITLB_LOOKUP_RANGE];
@@ -768,6 +708,34 @@ begin
 end
 `endif
 
+always @(posedge clk_i `CFG_RESET_SENSITIVITY)
+begin
+	if (rst_i == `TRUE)
+		go_to_user_mode <= `FALSE;
+	else
+		go_to_user_mode <= (eret_q_x || switch_to_user_mode);
+end
+
+always @(posedge clk_i `CFG_RESET_SENSITIVITY)
+begin
+	if (rst_i == `TRUE)
+		go_to_user_mode_2 <= `FALSE;
+	else
+		go_to_user_mode_2 <= go_to_user_mode;
+end
+
+always @(posedge clk_i `CFG_RESET_SENSITIVITY)
+begin
+	if (rst_i == `TRUE)
+		kernel_mode_reg <= `LM32_KERNEL_MODE;
+	else
+	begin
+		if (exception_x || switch_to_kernel_mode)
+			kernel_mode_reg <= `LM32_KERNEL_MODE;
+		else if (go_to_user_mode_2)
+			kernel_mode_reg <= `LM32_USER_MODE;
+	end
+end
 
 always @(posedge clk_i `CFG_RESET_SENSITIVITY)
 begin
@@ -775,11 +743,9 @@ begin
 		itlb_miss_q <= `FALSE;
 	else
 	begin
-		if (itlb_miss && ~itlb_miss_q)
+		if (itlb_miss && ~itlb_miss_q && ~(exception_x == `TRUE && stall_m == `FALSE && stall_x == `FALSE && q_x == `TRUE))
 			itlb_miss_q <= `TRUE;
-		else if (itlb_miss_q
-			// && exception_m == `TRUE
-			&& exception_x == `TRUE && stall_m == `FALSE && stall_x == `FALSE && q_x == `TRUE)
+		else if (itlb_miss_q && exception_x == `TRUE && stall_m == `FALSE && stall_x == `FALSE && q_x == `TRUE)
 			itlb_miss_q <= `FALSE;
 	end
 end
@@ -833,7 +799,10 @@ begin
 			begin
 				if (~in_exception)
 				begin
-					in_exception <= 1;
+					if (~exception_m)
+						in_exception <= 1;
+					else
+						in_exception <= 0;
 				end
 				else
 				begin
@@ -880,46 +849,47 @@ begin
 		begin
 			itlb_updating <= 0;
 			itlb_flushing <= 0;
-			if (itlb_miss == `TRUE && itlb_miss_q == `FALSE)
+			if (itlb_miss == `TRUE)
 			begin
 				itlb_miss_addr <= address_f;
 				$display("WARNING : ITLB MISS on addr 0x%08X at time %t", address_f * 4, $time);
 			end
 			if (csr_write_enable && ~csr_write_data[0])
 			begin
-				// FIXME : test for kernel mode is removed for testing purposes ONLY
-				if (csr == `LM32_CSR_TLB_CTRL /*&& (kernel_mode_reg == `LM32_KERNEL_MODE)*/)
+				if (csr == `LM32_CSR_TLB_PADDRESS /*&& (kernel_mode_reg == `LM32_KERNEL_MODE)*/)
 				begin
-`ifdef CFG_VERBOSE_DISPLAY_ENABLED
+					$display("[%t] ITLB WCSR to PADDR with csr_write_data == 0x%08X", $time, csr_write_data);
+//`ifdef CFG_VERBOSE_DISPLAY_ENABLED
+					$display("it's an UPDATE at %t", $time);
+//`endif
+					itlb_updating <= 1;
+				end
+				// FIXME : test for kernel mode is removed for testing purposes ONLY
+				else if (csr == `LM32_CSR_TLB_VADDRESS /*&& (kernel_mode_reg == `LM32_KERNEL_MODE)*/)
+				begin
+//`ifdef CFG_VERBOSE_DISPLAY_ENABLED
 					$display("ITLB WCSR at %t with csr_write_data == 0x%08X", $time, csr_write_data);
-`endif
+//`endif
 					case (csr_write_data[5:1])
 					`LM32_ITLB_CTRL_FLUSH:
 					begin
-`ifdef CFG_VERBOSE_DISPLAY_ENABLED
+//`ifdef CFG_VERBOSE_DISPLAY_ENABLED
 						$display("it's a FLUSH at %t", $time);
-`endif
+//`endif
 						itlb_flushing <= 1;
 						itlb_flush_set <= {addr_itlb_index_width{1'b1}};
 						itlb_state <= `LM32_TLB_STATE_FLUSH;
 						itlb_updating <= 0;
 					end
 
-					`LM32_ITLB_CTRL_UPDATE:
-					begin
-`ifdef CFG_VERBOSE_DISPLAY_ENABLED
-						$display("it's an UPDATE at %t", $time);
-`endif
-						itlb_updating <= 1;
-					end
-
 					`LM32_TLB_CTRL_INVALIDATE_ENTRY:
 					begin
-`ifdef CFG_VERBOSE_DISPLAY_ENABLED
+//`ifdef CFG_VERBOSE_DISPLAY_ENABLED
 						$display("it's an INVALIDATE ENTRY at %t", $time);
-`endif
+//`endif
 						itlb_flushing <= 1;
-						itlb_flush_set <= itlb_update_vaddr_csr_reg[`LM32_ITLB_IDX_RNG];
+//						itlb_flush_set <= itlb_update_vaddr_csr_reg[`LM32_ITLB_IDX_RNG];
+						itlb_flush_set <= csr_write_data[`LM32_ITLB_IDX_RNG];
 						itlb_updating <= 0;
 						itlb_state <= `LM32_TLB_STATE_CHECK;
 					end

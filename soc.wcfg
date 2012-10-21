@@ -9,7 +9,7 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="192" />
+   <WVObjectSize size="193" />
    <wvobject fp_name="/soc/memadr" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">memadr[31:0]</obj_property>
       <obj_property name="ObjectShortName">memadr[31:0]</obj_property>
@@ -833,5 +833,9 @@
    <wvobject fp_name="/soc/lm32/cpu/instruction_unit/icache/itlb_read_tag" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">itlb_read_tag</obj_property>
       <obj_property name="ObjectShortName">itlb_read_tag</obj_property>
+   </wvobject>
+   <wvobject fp_name="/soc/lm32/cpu/load_store_unit/dcache/dtlb_enabled" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">dtlb_enabled</obj_property>
+      <obj_property name="ObjectShortName">dtlb_enabled</obj_property>
    </wvobject>
 </wave_config>

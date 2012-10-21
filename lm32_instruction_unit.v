@@ -552,7 +552,6 @@ assign icache_read_enable_f =    (valid_f == `TRUE)
 `ifdef CFG_IROM_ENABLED 
                               && (irom_select_f == `FALSE)
 `endif       
-//				&& (exception_x == `FALSE)
                               ;
 `endif
 

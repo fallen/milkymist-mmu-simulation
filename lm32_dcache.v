@@ -780,33 +780,38 @@ begin
 			end
 			if (csr_write_enable && csr_write_data[0])
 			begin
-				// FIXME : test for kernel mode is removed for testing purposes ONLY
-				if (csr == `LM32_CSR_TLB_CTRL /*&& (kernel_mode_reg == `LM32_KERNEL_MODE)*/)
+				if (csr == `LM32_CSR_TLB_PADDRESS)
 				begin
+					$display("[ %t ] Updating a DTLB mapping 0x%08X -> 0x%08X", $time, dtlb_update_vaddr_csr_reg, dtlb_update_paddr_csr_reg);
+					dtlb_updating <= 1;
+				end
+				// FIXME : test for kernel mode is removed for testing purposes ONLY
+				else if (csr == `LM32_CSR_TLB_VADDRESS /*&& (kernel_mode_reg == `LM32_KERNEL_MODE)*/)
+				begin
+					dtlb_updating <= 0;
 					case (csr_write_data[5:1])
 					`LM32_DTLB_CTRL_FLUSH:
 					begin
+						$display("[ %t ] Flushing DTLB", $time);
 						dtlb_flushing <= 1;
 						dtlb_flush_set <= {addr_dtlb_index_width{1'b1}};
 						dtlb_state <= `LM32_TLB_STATE_FLUSH;
-						dtlb_updating <= 0;
-					end
-
-					`LM32_DTLB_CTRL_UPDATE:
-					begin
-						dtlb_updating <= 1;
 					end
 
 					`LM32_TLB_CTRL_INVALIDATE_ENTRY:
 					begin
+						$display("[ %t ] Invalidating DTLB entry 0x%08X", $time, dtlb_update_vaddr_csr_reg);
 						dtlb_flushing <= 1;
-						dtlb_flush_set <= dtlb_update_vaddr_csr_reg[`LM32_DTLB_IDX_RNG];
+//						dtlb_flush_set <= dtlb_update_vaddr_csr_reg[`LM32_DTLB_IDX_RNG];
+						dtlb_flush_set <= csr_write_data[`LM32_DTLB_IDX_RNG];
 						dtlb_updating <= 0;
 						dtlb_state <= `LM32_TLB_STATE_CHECK;
 					end
 
 					endcase
 				end
+				else
+					dtlb_updating <= 0;
 			end
 		end
 
