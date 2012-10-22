@@ -29,6 +29,9 @@ PROJECT = soc.prj
 
 all: simulation
 
+nogui: soc ram.data
+	./soc
+
 simulation: soc ram.data
 	./soc -gui -view soc.wcfg
 
