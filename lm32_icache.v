@@ -868,24 +868,24 @@ begin
 			begin
 				if (csr == `LM32_CSR_TLB_PADDRESS /*&& (kernel_mode_reg == `LM32_KERNEL_MODE)*/)
 				begin
+`ifdef CFG_VERBOSE_DISPLAY_ENABLED
 					$display("[%t] ITLB WCSR to PADDR with csr_write_data == 0x%08X", $time, csr_write_data);
-//`ifdef CFG_VERBOSE_DISPLAY_ENABLED
 					$display("it's an UPDATE at %t", $time);
-//`endif
+`endif
 					itlb_updating <= 1;
 				end
 				// FIXME : test for kernel mode is removed for testing purposes ONLY
 				else if (csr == `LM32_CSR_TLB_VADDRESS /*&& (kernel_mode_reg == `LM32_KERNEL_MODE)*/)
 				begin
-//`ifdef CFG_VERBOSE_DISPLAY_ENABLED
+`ifdef CFG_VERBOSE_DISPLAY_ENABLED
 					$display("ITLB WCSR at %t with csr_write_data == 0x%08X", $time, csr_write_data);
-//`endif
+`endif
 					case (csr_write_data[5:1])
 					`LM32_ITLB_CTRL_FLUSH:
 					begin
-//`ifdef CFG_VERBOSE_DISPLAY_ENABLED
+`ifdef CFG_VERBOSE_DISPLAY_ENABLED
 						$display("it's a FLUSH at %t", $time);
-//`endif
+`endif
 						itlb_flushing <= 1;
 						itlb_flush_set <= {addr_itlb_index_width{1'b1}};
 						itlb_state <= `LM32_TLB_STATE_FLUSH;
@@ -894,9 +894,9 @@ begin
 
 					`LM32_TLB_CTRL_INVALIDATE_ENTRY:
 					begin
-//`ifdef CFG_VERBOSE_DISPLAY_ENABLED
+`ifdef CFG_VERBOSE_DISPLAY_ENABLED
 						$display("[ %t ] ITLB TLBVADDRESS INVALIDATE ENTRY 0x%08X command [vaddr_reg == 0x%08X]", $time, csr_write_data, itlb_update_vaddr_csr_reg);
-//`endif
+`endif
 						itlb_flushing <= 1;
 //						itlb_flush_set <= itlb_update_vaddr_csr_reg[`LM32_ITLB_IDX_RNG];
 						itlb_flush_set <= csr_write_data[`LM32_ITLB_IDX_RNG];

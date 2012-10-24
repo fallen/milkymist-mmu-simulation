@@ -793,7 +793,9 @@ begin
 			begin
 				if (csr == `LM32_CSR_TLB_PADDRESS)
 				begin
+`ifdef CFG_VERBOSE_DISPLAY_ENABLED
 					$display("[ %t ] Updating a DTLB mapping 0x%08X -> 0x%08X", $time, dtlb_update_vaddr_csr_reg, dtlb_update_paddr_csr_reg);
+`endif
 					dtlb_updating <= 1;
 				end
 				// FIXME : test for kernel mode is removed for testing purposes ONLY
@@ -803,7 +805,9 @@ begin
 					case (csr_write_data[5:1])
 					`LM32_DTLB_CTRL_FLUSH:
 					begin
+`ifdef CFG_VERBOSE_DISPLAY_ENABLED
 						$display("[ %t ] Flushing DTLB", $time);
+`endif
 						dtlb_flushing <= 1;
 						dtlb_flush_set <= {addr_dtlb_index_width{1'b1}};
 						dtlb_state <= `LM32_TLB_STATE_FLUSH;
@@ -811,7 +815,9 @@ begin
 
 					`LM32_TLB_CTRL_INVALIDATE_ENTRY:
 					begin
+`ifdef CFG_VERBOSE_DISPLAY_ENABLED
 						$display("[ %t ] Invalidating DTLB entry 0x%08X", $time, dtlb_update_vaddr_csr_reg);
+`endif
 						dtlb_flushing <= 1;
 //						dtlb_flush_set <= dtlb_update_vaddr_csr_reg[`LM32_DTLB_IDX_RNG];
 						dtlb_flush_set <= csr_write_data[`LM32_DTLB_IDX_RNG];
@@ -820,7 +826,9 @@ begin
 					end
 					default:
 					begin
+`ifdef CFG_VERBOSE_DISPLAY_ENABLED
 						$display("[ %t ] DTLB TLBVADDRESS stored 0x%08X", $time, csr_write_data);
+`endif
 					end
 					endcase
 				end
