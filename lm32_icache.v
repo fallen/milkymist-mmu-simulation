@@ -792,7 +792,9 @@ begin
 		begin
 			if (eret_q_x)
 			begin
-//				$display("[%t] itlb_enabled <= 0x%08X upon eret", $time, csr_psw[`LM32_CSR_PSW_EITLBE]);
+`ifdef CFG_VERBOSE_DISPLAY_ENABLED
+				$display("[%t] itlb_enabled <= 0x%08X upon eret", $time, csr_psw[`LM32_CSR_PSW_EITLBE]);
+`endif
 				itlb_enabled <= csr_psw[`LM32_CSR_PSW_EITLBE];
 			end
 			else if (exception_x || in_exception)
@@ -808,7 +810,9 @@ begin
 				begin
 					if (exception_m)
 					begin
+`ifdef CFG_VERBOSE_DISPLAY_ENABLED
 						$display("[%t] pc_exception <= 0x%08X", $time, pc_m);
+`endif
 						pc_exception <= pc_m;
 					end
 					if (pc_exception == pc_w)
@@ -816,13 +820,17 @@ begin
 						in_exception <= 0;
 					end
 				end
+`ifdef CFG_VERBOSE_DISPLAY_ENABLED
 				$display("[%t] itlb_enabled <= 0x%08X upon exception", $time, 0);
+`endif
 				itlb_enabled <= 0;
 			end
 			else
 			begin
+`ifdef CFG_VERBOSE_DISPLAY_ENABLED
 				if (itlb_enabled != csr_psw[`LM32_CSR_PSW_ITLBE])
 					$display("[%t] itlb_enabled <= 0x%08X", $time, csr_psw[`LM32_CSR_PSW_ITLBE]);
+`endif
 
 				itlb_enabled <= csr_psw[`LM32_CSR_PSW_ITLBE];
 			end
@@ -834,7 +842,9 @@ always @(posedge clk_i `CFG_RESET_SENSITIVITY)
 begin
 	if (rst_i == `TRUE)
 	begin
+`ifdef CFG_VERBOSE_DISPLAY_ENABLED
 		$display("ITLB STATE MACHINE RESET");
+`endif
 		itlb_flushing <= 1;
 		itlb_flush_set <= {addr_itlb_index_width{1'b1}};
 		itlb_state <= `LM32_TLB_STATE_FLUSH;

@@ -765,7 +765,9 @@ always @(posedge clk_i `CFG_RESET_SENSITIVITY)
 begin
 	if (rst_i == `TRUE)
 	begin
+`ifdef CFG_VERBOSE_DISPLAY_ENABLED
 		$display("DTLB STATE MACHINE RESET");
+`endif
 		dtlb_flushing <= 1;
 		dtlb_flush_set <= {addr_dtlb_index_width{1'b1}};
 		dtlb_state <= `LM32_TLB_STATE_FLUSH;
@@ -783,7 +785,9 @@ begin
 			if (dtlb_miss == `TRUE)
 			begin
 				dtlb_miss_addr <= address_m;
+`ifdef CFG_VERBOSE_DISPLAY_ENABLED
 				$display("WARNING : DTLB MISS on addr 0x%08X at time %t", address_m, $time);
+`endif
 			end
 			if (csr_write_enable && csr_write_data[0])
 			begin
