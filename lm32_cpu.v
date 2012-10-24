@@ -2196,7 +2196,7 @@ begin
     `LM32_CSR_JRX:  csr_read_data_x = jrx_csr_read_data;
 `endif
     `LM32_CSR_CFG2: csr_read_data_x = cfg2;
-`ifdef `LM32_MMU_ENABLED
+`ifdef CFG_MMU_ENABLED
     `LM32_CSR_TLB_VADDRESS: csr_read_data_x = load_store_csr_read_data_x;
     `LM32_CSR_TLB_PADDRESS: csr_read_data_x = instruction_csr_read_data_x;
     `LM32_CSR_PSW:	csr_read_data_x = lm32_csr_psw_reg;

@@ -284,7 +284,7 @@ reg [`LM32_DC_ADDR_OFFSET_RNG] refill_offset;           // Which word in cache l
 wire last_refill;                                       // Indicates when on last cycle of cache refill
 reg [`LM32_DC_TMEM_ADDR_RNG] flush_set;                 // Which set is currently being flushed
 
-`ifdef LM32_MMU_ENABLED
+`ifdef CFG_MMU_ENABLED
 wire [addr_dtlb_index_width-1:0] dtlb_data_read_address;
 wire [addr_dtlb_index_width-1:0] dtlb_data_write_address;
 wire dtlb_data_read_port_enable;
