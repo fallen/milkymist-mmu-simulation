@@ -284,6 +284,7 @@ reg [`LM32_DC_ADDR_OFFSET_RNG] refill_offset;           // Which word in cache l
 wire last_refill;                                       // Indicates when on last cycle of cache refill
 reg [`LM32_DC_TMEM_ADDR_RNG] flush_set;                 // Which set is currently being flushed
 
+`ifdef LM32_MMU_ENABLED
 wire [addr_dtlb_index_width-1:0] dtlb_data_read_address;
 wire [addr_dtlb_index_width-1:0] dtlb_data_write_address;
 wire dtlb_data_read_port_enable;
@@ -310,10 +311,11 @@ reg dtlb_miss_q = `FALSE;
 reg [`LM32_WORD_RNG] dtlb_miss_addr;
 wire dtlb_data_valid;
 wire [`LM32_DTLB_LOOKUP_RANGE] dtlb_lookup;
+assign kernel_mode = kernel_mode_reg;
+`endif
 
 genvar i, j;
 
-assign kernel_mode = kernel_mode_reg;
 
 /////////////////////////////////////////////////////
 // Functions
@@ -553,12 +555,17 @@ assign flushing = state[0];
 assign check = state[1];
 assign refill = state[2];
 
-assign miss = (~(|way_match)) && (load_q_m == `TRUE) && (stall_m == `FALSE) && (~dtlb_miss);
-assign stall_request = (check == `FALSE) || (dtlb_state == `LM32_TLB_STATE_FLUSH 
+assign miss = (~(|way_match)) && (load_q_m == `TRUE) && (stall_m == `FALSE)
 `ifdef CFG_MMU_ENABLED
-			&& (dtlb_enabled == `TRUE)
+ 		&& (~dtlb_miss)
 `endif
-			);
+		;
+assign stall_request = (check == `FALSE) 
+`ifdef CFG_MMU_ENABLED
+			|| (dtlb_state == `LM32_TLB_STATE_FLUSH 
+			&& (dtlb_enabled == `TRUE))
+`endif
+			;
 
 /////////////////////////////////////////////////////
 // Sequential logic
@@ -807,7 +814,10 @@ begin
 						dtlb_updating <= 0;
 						dtlb_state <= `LM32_TLB_STATE_CHECK;
 					end
-
+					default:
+					begin
+						$display("[ %t ] DTLB TLBVADDRESS stored 0x%08X", $time, csr_write_data);
+					end
 					endcase
 				end
 				else

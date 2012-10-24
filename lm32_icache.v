@@ -885,7 +885,7 @@ begin
 					`LM32_TLB_CTRL_INVALIDATE_ENTRY:
 					begin
 //`ifdef CFG_VERBOSE_DISPLAY_ENABLED
-						$display("it's an INVALIDATE ENTRY at %t", $time);
+						$display("[ %t ] ITLB TLBVADDRESS INVALIDATE ENTRY 0x%08X command [vaddr_reg == 0x%08X]", $time, csr_write_data, itlb_update_vaddr_csr_reg);
 //`endif
 						itlb_flushing <= 1;
 //						itlb_flush_set <= itlb_update_vaddr_csr_reg[`LM32_ITLB_IDX_RNG];

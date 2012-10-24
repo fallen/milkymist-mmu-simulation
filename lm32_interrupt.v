@@ -266,7 +266,11 @@ begin
             else if (csr_write_enable == `TRUE)
             begin
                 // Handle wcsr write
-                if ((csr == `LM32_CSR_IE) || (csr == `LM32_CSR_PSW))
+                if ((csr == `LM32_CSR_IE)
+`ifdef `LM32_MMU_ENABLED
+		 || (csr == `LM32_CSR_PSW)
+`endif
+		)
                 begin
                     ie <= csr_write_data[0];
                     eie <= csr_write_data[1];

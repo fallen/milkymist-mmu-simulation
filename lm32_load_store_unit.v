@@ -172,9 +172,9 @@ input kill_x;                                           // Kill instruction in X
 input kill_m;                                           // Kill instruction in M stage
 input exception_m;                                      // An exception occured in the M stage
 input exception_x;                                      // An exception occured in the X stage
-input eret_q_x;
 
 `ifdef CFG_MMU_ENABLED
+input eret_q_x;
 input [`LM32_CSR_RNG] csr;				// CSR read/write index
 input [`LM32_WORD_RNG] csr_write_data;			// Data to write to specified CSR
 input csr_write_enable;					// CSR write enable
