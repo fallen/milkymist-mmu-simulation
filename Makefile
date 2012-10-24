@@ -25,9 +25,19 @@ SOURCE =jtag_cores.v \
 	m1reset.v \
 	soc.v
 
+DURATION ?= 500000
+
 PROJECT = soc.prj
 
 all: simulation
+
+dmp: dmp.data
+
+dmp.data: soc ram.data
+	echo -e "restart \n init \n run $(DURATION) \n" | ./soc 2> /dev/null 1> dmp.data
+# Dump done, now removing useless first 10 lines
+	sed -ie '1,10d' dmp.data
+	@echo You can now run dmp on the dmp.data dump file to draw the pipeline
 
 nogui: soc ram.data
 	./soc
@@ -50,4 +60,4 @@ clean:
 cleanall: clean
 	$(MAKE) -C tools/h2a/ clean
 
-.PHONY: clean cleanall simulation all tools
+.PHONY: clean cleanall simulation all tools dmp nogui

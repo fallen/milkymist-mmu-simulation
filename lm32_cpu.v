@@ -633,6 +633,9 @@ reg [`LM32_WORD_RNG] csr_read_data_x;           // Data read from CSRs
 `ifdef CFG_PIPELINE_TRACES
 wire [`LM32_PC_RNG] pc_a;
 `endif
+`ifdef CFG_DRAW_ME_A_PIPELINE
+wire [`LM32_PC_RNG] pc_a;
+`endif
 wire [`LM32_PC_RNG] pc_f;                       // PC of instruction in F stage
 wire [`LM32_PC_RNG] pc_d;                       // PC of instruction in D stage
 wire [`LM32_PC_RNG] pc_x;                       // PC of instruction in X stage
@@ -652,6 +655,21 @@ begin
 			$display("[%t] Decoding   inst @ 0x%08X", $time, pc_d);
 		if (~stall_x)
 			$display("[%t] Executing  inst @ 0x%08X", $time, pc_x);*/
+	end
+end
+`endif
+
+`ifdef CFG_DRAW_ME_A_PIPELINE
+always @(posedge clk_i `CFG_RESET_SENSITIVITY)
+begin
+	if (~rst_i)
+	begin
+		$display("[%d] PC_A 0x%08X", $time, pc_a);
+		$display("[%d] PC_F 0x%08X", $time, pc_f);
+		$display("[%d] PC_D 0x%08X", $time, pc_d);
+		$display("[%d] PC_X 0x%08X", $time, pc_x);
+		$display("[%d] PC_M 0x%08X", $time, pc_m);
+		$display("[%d] PC_W 0x%08X", $time, pc_w);
 	end
 end
 `endif
